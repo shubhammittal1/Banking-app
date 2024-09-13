@@ -33,6 +33,7 @@ public class AccountServiceImpl implements AccountService {
     // Creates a new account and saves it to the repository
     @Override
     public Account createAccount(Account account) throws  IllegalArgumentException {
+
         if(accountRepo.count()==0){
             Generator generate=new Generator();
             account.setAccountId(generate.generateID());
