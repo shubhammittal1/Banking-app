@@ -1,6 +1,7 @@
 package com.excelr.bank.controllers;
 
 import com.excelr.bank.models.Transaction;
+import com.excelr.bank.payload.request.Statement;
 import com.excelr.bank.security.services.impl.TransactionServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -52,20 +53,20 @@ public class TransactionController {
         transactionService.deleteTransaction(id);
     }
 
-    @GetMapping("/generate/statement")
-    public ResponseEntity<?> generateStatement(@RequestBody Transaction transaction) throws NullPointerException{
-        if(transaction.getTransactionId()!=null && transaction.getStartDate()!=null && transaction.getEndDate()!=null){
-            transactionService.getStatement(transaction.getTransactionId(),transaction.getStartDate(),transaction.getEndDate());
-            return ResponseEntity.status(HttpStatus.OK).body("Statement Generated Succesfully");
+    @PostMapping("/generate/statement")
+    public ResponseEntity<?> generateStatement(@RequestBody Statement statement) throws NullPointerException{
+        if(null!=statement.getUserId() && null!=statement.getStartDate() && null!= statement.getEndDate()){
+            List<Transaction> transactionList=transactionService.getStatement(statement.getUserId(),statement.getStartDate(),statement.getEndDate());
+            return ResponseEntity.status(HttpStatus.OK).body(transactionList);
         }else{
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Data");
         }
     }
 
-    @GetMapping("/download/statement")
-    public ResponseEntity<?> downloadStatement(@RequestBody Transaction transaction) throws  NullPointerException{
-        if(transaction.getTransactionId()!=null && transaction.getStartDate()!=null && transaction.getEndDate()!=null){
-            transactionService.downloadStatement(transaction.getTransactionId(),transaction.getStartDate(),transaction.getEndDate());
+    @PostMapping("/download/statement")
+    public ResponseEntity<?> downloadStatement(@RequestBody Statement transaction) throws  NullPointerException{
+        if(transaction.getUserId()!=null && transaction.getStartDate()!=null && transaction.getEndDate()!=null){
+            transactionService.downloadStatement(transaction.getUserId(),transaction.getStartDate(),transaction.getEndDate());
             return ResponseEntity.status(HttpStatus.OK).body("Statement Downloaded Succesfully");
         }else{
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Data");        }

@@ -7,6 +7,7 @@ import com.excelr.bank.repository.AccountRepository;
 import com.excelr.bank.repository.TransactionRepository;
 import com.excelr.bank.repository.UserRepository;
 import com.excelr.bank.security.services.interfaces.TransactionService;
+import com.excelr.bank.util.FormatterUtil;
 import jakarta.transaction.InvalidTransactionException;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.chrono.ChronoLocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -54,15 +54,19 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<Transaction> getStatement(String accountId, LocalDate startDate, LocalDate endDate) {
+    public List<Transaction> getStatement(Long userId, String startDate, String endDate) {
         try {
             // Retrieve account transactions from repository
-            List<Transaction> transactions = transactionRepository.findTransactionsByTransactionIdAndDateBetween(accountId, startDate, endDate);
-
+            List<Transaction> transactions = transactionRepository.findTransactionsByUserId(userId);
+//            System.out.println("transaction before"+transactions);
             // Filter transactions by date range
             transactions = transactions.stream()
-                    .filter(transaction -> transaction.getDate().isAfter(ChronoLocalDateTime.from(startDate)) && transaction.getDate().isBefore(ChronoLocalDateTime.from(endDate)))
+                    .filter(transaction -> transaction.getTransactionDateAndTime().isAfter
+                            (ChronoLocalDateTime.from(FormatterUtil.formatData(startDate)))
+                            && transaction.getTransactionDateAndTime().isBefore(ChronoLocalDateTime.from(
+                                    FormatterUtil.formatData(endDate))))
                     .collect(Collectors.toList());
+//            System.out.println("transaction after"+transactions);
 
             if (transactions.isEmpty()) {
                 throw new ServiceException("No transactions found for the given account ID and date range");
@@ -75,12 +79,12 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public void downloadStatement(String accountId, LocalDate startDate, LocalDate endDate) {
+    public void downloadStatement(Long userId, String startDate, String endDate) {
         try {
-            List<Transaction> transactions = getStatement(accountId, startDate, endDate);
+            List<Transaction> transactions = getStatement(userId, startDate, endDate);
 
             // Create a CSV file or other format
-            File statementFile = new File("statement_" + accountId + ".csv");
+            File statementFile = new File("statement_" + userId + ".csv");
             try (PrintWriter writer = new PrintWriter(statementFile)) {
                 writer.println("Transaction ID,Transaction Type,Amount,Beneficiary Amount,Beneficiary Account,Description,Transaction Time");
 

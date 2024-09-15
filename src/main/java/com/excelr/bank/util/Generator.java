@@ -16,8 +16,6 @@ public class Generator {
 
         // Generate Account Number by appending a fixed prefix and a cryptographical random number
        return  String.format("%10d", root );
-
-
     }
 
     public Long generateID(){
