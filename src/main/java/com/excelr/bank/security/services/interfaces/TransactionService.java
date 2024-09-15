@@ -1,5 +1,6 @@
 package com.excelr.bank.security.services.interfaces;
 
+import com.excelr.bank.models.Account;
 import com.excelr.bank.models.Transaction;
 import jakarta.transaction.InvalidTransactionException;
 
@@ -7,7 +8,12 @@ import java.util.List;
 
 public interface TransactionService {
     // Create a new transaction
-    Transaction insertRecord(Long customerId,Transaction transaction,Long accountId)
+    Transaction insertDepositRecord(Long customerId,Transaction transaction,Long accountId)
+            throws InvalidTransactionException;
+
+    Transaction insertTransferRecord(Long customerId, Transaction transaction, Account accountId)
+            throws InvalidTransactionException;
+    Transaction insertWithdrawRecord(Long customerId, Transaction transaction, Account accountId)
             throws InvalidTransactionException;
     // Retrieve a transaction by ID
     Transaction getTransactionById(Long id);

@@ -2,6 +2,7 @@ package com.excelr.bank.controllers;
 
 // Import necessary classes and libraries
 
+import com.excelr.bank.exception.UserNotFoundException;
 import com.excelr.bank.models.Account;
 import com.excelr.bank.models.Transaction;
 import com.excelr.bank.security.services.impl.AccountServiceImpl;
@@ -50,7 +51,6 @@ public class AccountController {
 				BigDecimal tempAmount = transaction.getDepositAmount();
 				String tempStatus = transaction.getNarration();
 				accountService.deposit(accountId, transaction, tempStatus);
-				//transactionService.insertRecord(accountId,request);
 				return ResponseEntity.ok("Deposit successful");
 			}catch (InvalidTransactionException e){
 				e.getMessage();
@@ -62,15 +62,22 @@ public class AccountController {
 	@PostMapping("/{accountId}/withdrawal")
 	//Assign Roles to access this EndPoint
 	@PreAuthorize("hasRole('ROLE_USER')  or hasRole('ROLE_ADMIN')")
-	public ResponseEntity<String> withdraw(@PathVariable Long accountId, @RequestBody Transaction request) throws InvalidTransactionException {
-		Account account=new Account();
-		if(!account.getStatus().equals("Lock")) {
-			accountService.withdraw(accountId, request.getDepositAmount(), request.getNarration());
-			return ResponseEntity.ok("Withdrawal successful");
-		}else{
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Account Lock Transaction Not allowed");
-		}
+	public ResponseEntity<?> withdraw(@PathVariable Long accountId, @RequestBody Transaction request) throws InvalidTransactionException {
+
+		return accountService.withdraw(accountId, request.getWithdrawalAmount(), request.getNarration());
 	}
+
+	@PostMapping("/transfer")
+	public ResponseEntity<?> transfer(@RequestBody Transaction request)  {
+		try {
+				return accountService.transfer(request, request.getDepositAmount());
+		}catch (InvalidTransactionException e ){
+			e.getMessage();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Transfer Not Successful");
+		} catch (UserNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 	// Define a GET endpoint to retrieve all account records
 	@GetMapping("/Records")

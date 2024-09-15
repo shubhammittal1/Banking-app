@@ -8,6 +8,7 @@ import com.excelr.bank.repository.TransactionRepository;
 import com.excelr.bank.repository.UserRepository;
 import com.excelr.bank.security.services.interfaces.TransactionService;
 import com.excelr.bank.util.FormatterUtil;
+import io.micrometer.common.util.StringUtils;
 import jakarta.transaction.InvalidTransactionException;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,25 +35,51 @@ public class TransactionServiceImpl implements TransactionService {
     private UserRepository userRepository;
 
     @Override
-    public Transaction insertRecord(Long customerId, Transaction transaction,Long accountId) throws InvalidTransactionException {
+    public Transaction insertDepositRecord(Long customerId, Transaction transaction,Long accountId) throws InvalidTransactionException {
             Account account= accountRepo.findById(accountId).orElseThrow();
             User user= userRepository.getReferenceById(customerId);
-            System.out.print("Account"+ account);
-            System.out.print("User"+user);
+            System.out.println("User Details"+user);
+            if (StringUtils.isNotEmpty(transaction.getRecipientAccount())){
+                Account acc1=accountRepo.findAccountByAccountNumber(transaction.getRecipientAccount());
+                transaction.setRecipientName(acc1.getAccountHolderName());
+            }
             transaction.setCustomerName(account.getAccountHolderName());
             BigDecimal AmountDeposit=account.getBalance().add(transaction.getDepositAmount());
             transaction.setUserId(user.getUserId());
             transaction.setSourceAccount(account.getAccountNumber());
             transaction.setCustomerName(user.getUsername());
+            transaction.setTransactionMode("offline");
             account.setBalance(AmountDeposit);
             accountRepo.save(account);
             if (transaction.getDepositAmount() == null ) {
                 throw new InvalidTransactionException("null is not allowed");
             }
-        System.out.println("Transaction Data"+transaction.toString());
         return transactionRepository.save(transaction);
     }
 
+    @Override
+    public Transaction insertTransferRecord(Long customerId, Transaction transaction,Account account) throws InvalidTransactionException {
+        User user= userRepository.getReferenceById(customerId);
+        System.out.println("User Details"+user);
+        transaction.setCustomerName(account.getAccountHolderName());
+        transaction.setUserId(user.getUserId());
+        transaction.setSourceAccount(account.getAccountNumber());
+        transaction.setCustomerName(user.getUsername());
+        return transactionRepository.save(transaction);
+    }
+
+    @Override
+    public Transaction insertWithdrawRecord(Long customerId, Transaction transaction,Account account) throws InvalidTransactionException {
+        transaction.setUserId(account.getUserId());
+        transaction.setSourceAccount(account.getAccountNumber());
+        transaction.setRecipientAccount("NA");
+        transaction.setCustomerName(account.getAccountHolderName());
+        transaction.setTransactionMode("offline");
+        if (transaction.getDepositAmount() == null ) {
+            throw new InvalidTransactionException("null is not allowed");
+        }
+        return transactionRepository.save(transaction);
+    }
     @Override
     public List<Transaction> getStatement(Long userId, String startDate, String endDate) {
         try {

@@ -14,7 +14,7 @@ public interface AccountService {
 
      ResponseEntity<?> deposit(Long accountId, Transaction transaction, String narration) throws InvalidTransactionException;
 
-     void withdraw(Long accountId, BigDecimal amount, String narration) throws InvalidTransactionException;
+     ResponseEntity<?> withdraw(Long accountId, BigDecimal amount, String narration) throws InvalidTransactionException;
 
     //Get Account Details by Accountid
      Account getAccountDataById(Long id);

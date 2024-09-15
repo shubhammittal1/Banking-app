@@ -1,7 +1,6 @@
 package com.excelr.bank.models;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.DecimalMin;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,7 +30,7 @@ public class Account {
 
 	private String rateOfInterest;
 
-	@DecimalMin(value = "0", message = "balance should be greater than 0")  // Ensures the balance is at least 0.01
+//	@DecimalMin(value = "0", message = "balance should be greater than 0")  // Ensures the balance is at least 0.01
 	private BigDecimal balance;
 
 	// Defines a many-to-one relationship with the User entity, using lazy loading

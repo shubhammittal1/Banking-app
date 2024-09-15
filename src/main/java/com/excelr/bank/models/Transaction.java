@@ -29,7 +29,6 @@ public class Transaction {
     private String transactionId;
 
     @DecimalMin(value="0", message="Deposit should be greater than 0")
-    // Amount deposited in the transaction, must be greater than 0
     private BigDecimal depositAmount;
 
     @DecimalMin(value="0", message="Withdrawal should be greater than 0")

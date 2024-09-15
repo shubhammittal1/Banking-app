@@ -1,6 +1,7 @@
 package com.excelr.bank.security.services.impl;
 
 import com.excelr.bank.exception.InsufficientBalanceException;
+import com.excelr.bank.exception.UserNotFoundException;
 import com.excelr.bank.models.Account;
 import com.excelr.bank.models.Transaction;
 import com.excelr.bank.models.User;
@@ -70,14 +71,10 @@ public class AccountServiceImpl implements AccountService {
         System.out.print("accountId"+accountId);
         Account account = accountRepo.findById(accountId).orElseThrow();
         if(account.getStatus().contains("Active")) {
-//            Transaction transaction = new Transaction();
             if (transaction.getDepositAmount().compareTo(BigDecimal.ZERO) > 0) {
-                // populate transaction fields
-//                transaction.setDepositAmount(amount);
-                transactionService.insertRecord(account.getUserId(), transaction,accountId);
-//                account.setBalance(account.getBalance().add(amount));
-//                accountRepo.save(account);
-                return ResponseEntity.status(HttpStatus.OK).body("");
+                System.out.println("Transaction object"+transaction);
+                Transaction transaction1=transactionService.insertDepositRecord(account.getUserId(), transaction,accountId);
+                return ResponseEntity.status(HttpStatus.OK).body(transaction1);
             } else {
                 throw new InvalidTransactionException("Deposit Amount Greater than 0");
             }
@@ -87,33 +84,62 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void withdraw(Long accountId, BigDecimal amount, String narration) throws InvalidTransactionException {
-        Account account = accountRepo.findById(accountId).orElseThrow();
-        if (account.getBalance().compareTo(amount) < 0) {
-            throw new InsufficientBalanceException();
-        }
-        BigDecimal availableBalance=account.getBalance();
-        Transaction transaction = new Transaction();
-        // populate transaction fields
-        if(availableBalance.compareTo(amount)>=0 && amount.compareTo(BigDecimal.ZERO)>0) {
-            transaction.setDepositAmount(amount.negate()); // negate the amount for withdrawal
-            if(transaction.getNarration().isEmpty() || transaction.getNarration().isBlank()) {
-                transaction.setNarration("Withdrawal");
+    public ResponseEntity<?> withdraw(Long userId, BigDecimal amount, String narration) throws InvalidTransactionException {
+        Account account = accountRepo.findById(userId).orElseThrow();
+        if(!account.getStatus().equals("Lock")) {
+            if (account.getBalance().compareTo(amount) < 0) {
+                throw new InsufficientBalanceException();
             }
-            if(transaction.getTransactionMode().isBlank() || transaction.getTransactionMode().isEmpty()) {
+            BigDecimal availableBalance = account.getBalance();
+            Transaction transaction = new Transaction();
+            if (availableBalance.compareTo(amount) >= 0 && amount.compareTo(BigDecimal.ZERO) > 0) {
                 transaction.setTransactionMode("Online");
+                if (narration.isEmpty() || narration.isBlank()) {
+                    transaction.setNarration("Withdrawal");
+                }
+                transaction.setSourceAccount(account.getAccountNumber());
+                transaction.setDepositAmount(BigDecimal.ZERO);
+                Transaction transWithdraw=transactionService.insertWithdrawRecord(account.getUserId(), transaction, account);
+                account.setBalance(account.getBalance().subtract(amount));
+                accountRepo.save(account);
+                return ResponseEntity.status(HttpStatus.OK).body("Withdrawal Success: "+transWithdraw);
+
+            } else if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+                throw new InvalidTransactionException("Amount Must be positive");
+            } else if (!amount.equals(availableBalance)) {
+                throw new InvalidTransactionException("Amount must be less than or equal to Available Balance");
+            } else {
+                throw new InvalidTransactionException("Withdraw Not Allowed");
             }
-            transaction.setSourceAccount(account.getAccountNumber());
-            transactionService.insertRecord(accountId,transaction,accountId);
-            account.setBalance(account.getBalance().subtract(amount));
-            accountRepo.save(account);
-        } else if (amount.compareTo(BigDecimal.ZERO)<=0) {
-            throw new InvalidTransactionException("Amount Must be positive");
-        }else if(!amount.equals(availableBalance)){
-            throw new InvalidTransactionException("Amount must be less than or equal to Available Balance");
         }else{
-            throw new InvalidTransactionException("Withdraw Not Allowed");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Account Lock");
         }
+    }
+
+    public ResponseEntity<?> transfer(Transaction request,BigDecimal amount) throws InsufficientBalanceException, InvalidTransactionException ,UserNotFoundException {
+        Account srcAccount=accountRepo.findAccountByAccountNumber(request.getSourceAccount());
+        Account destAccount=accountRepo.findAccountByAccountNumber(request.getRecipientAccount());
+        if(srcAccount.getBalance().compareTo(amount) < 0 ){
+            throw new InsufficientBalanceException();
+        }else{
+            if(request.getSourceAccount().equals(request.getRecipientAccount())) {
+                throw new InvalidTransactionException("Source and Destination Account Same");
+            }else {
+                srcAccount.setBalance(srcAccount.getBalance().subtract(amount));
+                destAccount.setBalance(destAccount.getBalance().add(amount));
+                accountRepo.save(srcAccount);
+                accountRepo.save(destAccount);
+                if(null==request.getNarration()){
+                    request.setNarration("Money Transfer");
+                }
+                Transaction transaction=transactionService.insertTransferRecord(srcAccount.getUserId(), request,srcAccount);
+                transaction.setUserId(null);
+                transaction.setRecipientAccount("XXXX");
+                transaction.setSourceAccount("XXXX");
+                return ResponseEntity.status(HttpStatus.OK).body("Transfer Successful  " +transaction);
+            }
+        }
+
     }
 
     // Updates an existing account with new details
