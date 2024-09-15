@@ -1,0 +1,188 @@
+{
+	"info": {
+		"_postman_id": "e2372aa6-7db6-4f63-af49-02368dbff032",
+		"name": "Banking App",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25165352"
+	},
+	"item": [
+		{
+			"name": "generateStatement",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTaHViaGFtMTIzIiwiaWF0IjoxNzI2NDAyMDUwLCJleHAiOjE3MjY0MDkyNTB9.2M9G7haeE2nSGtjLK-C2AZDExRKmzlbH3tXLKRu7SOI",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n       \"userId\":\"94477296\",\r\n       \"startDate\": \"2024-09-15 14:00\",\r\n       \"endDate\":\"2024-09-15 18:00\"\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/transaction/generate/statement",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"transaction",
+						"generate",
+						"statement"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "createAccount",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTaHViaGFtMTIzIiwiaWF0IjoxNzI2Mzk0NDgyLCJleHAiOjE3MjY0MDE2ODJ9.NXIsmAmVx-Jo2K4tdcEsq56Qbk6Kz2TNhn2kzqrDfsA",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\r\n    \"accountType\":\"Current\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/account/create?userId=94477296",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"account",
+						"create"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "94477296"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "createBank",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"bankName\":\"INBC Bank\",\r\n    \"ifscCode\":\"INDB00123\",\r\n    \"Address\":\"Mumbai\",\r\n    \"phoneNo\":\"9899789954\",\r\n    \"email\":\"Demo1@excelrbanking.com\",\r\n    \"website\":\"inbc.com\",\r\n    \"country\":\"India\",\r\n    \"currency\":\"INR\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/account/create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"account",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "userloginin",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\":\"Shubham123\",\r\n    \"password\":\"Shubham@123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/auth/username/signin",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"auth",
+						"username",
+						"signin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "userSignup",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTaHViaGFtIiwiaWF0IjoxNzI1NDMzMjIwLCJleHAiOjE3MjU1MTk2MjB9.YekCnBnHckrnag0uAWd-fB8i-nIGRu3qFap6QJLSN5Y",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\":\"Shubham123\",\r\n    \"password\":\"Shubham@123\",\r\n    \"email\":\"shubham.mittal@gmail.com\",\r\n    \"gender\":\"Male\",\r\n    \"dateOfBirth\":\"16-09-1992\",\r\n    \"address\": \"Chennai\",\r\n    \"aadharNo\":\"879908986308\",\r\n    \"pancard\":\"CZDFH7889S\",\r\n    \"phoneNo\":\"7460889660\",\r\n    \"role\":[\"ROLE_ADMIN\",\"ROLE_USER\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/auth/user/signup",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"auth",
+						"user",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
