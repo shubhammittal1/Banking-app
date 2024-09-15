@@ -257,6 +257,143 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Forgot PasswordRequest",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/password/forgot?email=shubham.mittal843@gmail.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"password",
+						"forgot"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "shubham.mittal843@gmail.com"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Reset Password",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTaHViaGFtIiwiaWF0IjoxNzI1NzQ0NDI0LCJleHAiOjE3MjU3NTE2MjR9.2DqVXyfrxJKVPLy5vCYcwspOt31RoGD9kug-2zw1iNw",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/password/reset?email=shubham.mittal843@gmail.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"password",
+						"reset"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "shubham.mittal843@gmail.com"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Change Password",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTaHViaGFtIiwiaWF0IjoxNzI1NzQ0NDI0LCJleHAiOjE3MjU3NTE2MjR9.2DqVXyfrxJKVPLy5vCYcwspOt31RoGD9kug-2zw1iNw",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"email\":\"shubham.mittal843@gmail.com\",\r\n\"password\":\"Shubham@9897\",\r\n\"confirmPassword\":\"Shubham@9897\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/password/change?otp=315435",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"password",
+						"change"
+					],
+					"query": [
+						{
+							"key": "otp",
+							"value": "315435"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get ALL Records",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTaHViaGFtIiwiaWF0IjoxNzI1ODkxODA3LCJleHAiOjE3MjU4OTkwMDd9.O2z5nlsbymbMaYa0B0pvHNJXa93UupBQsnik4ptp8b8",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/api/all",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"all"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }
