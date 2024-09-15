@@ -1,15 +1,17 @@
 package com.excelr.bank.security.services.impl;
 
-import com.excelr.bank.exception.AccountDetailsException;
 import com.excelr.bank.exception.InsufficientBalanceException;
 import com.excelr.bank.models.Account;
 import com.excelr.bank.models.Transaction;
+import com.excelr.bank.models.User;
 import com.excelr.bank.repository.AccountRepository;
 import com.excelr.bank.repository.UserRepository;
 import com.excelr.bank.security.services.interfaces.AccountService;
 import com.excelr.bank.util.Generator;
 import jakarta.transaction.InvalidTransactionException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -32,27 +34,27 @@ public class AccountServiceImpl implements AccountService {
 
     // Creates a new account and saves it to the repository
     @Override
-    public Account createAccount(Account account) throws  IllegalArgumentException {
-
-        if(accountRepo.count()==0){
-            Generator generate=new Generator();
+    public ResponseEntity<?> createAccount(Account account, Long userId) throws  IllegalArgumentException {
+        Optional<Account> chkAcc = accountRepo.findById(userId);
+        if (chkAcc.isEmpty()) {
+            Optional<User> user = userRepository.findById(userId);
+            System.out.print("User Data"+user);
+            account.setAccountHolderName(user.get().getUsername());
+            Generator generate = new Generator();
             account.setAccountId(generate.generateID());
             account.setAccountNumber(generate.generateAcc());
             account.setStatus("Active");
-            return accountRepo.save(account);
-        }else {
-            Account account1 = accountRepo.findById(account.getAccountId())
-                    .orElseThrow(() -> new AccountDetailsException("Account Id not Found with account id: " + account.getAccountId()));
-            if (account1 == null) {
-                throw new RuntimeException("Account Details cannot be null");
-            } else {
-                Generator generate=new Generator();
-                account.setAccountId(generate.generateID());
-                account.setAccountNumber(generate.generateAcc());
-                account.setStatus("Active");
-                return accountRepo.save(account);
-            }// Save and return the newly created account
+            account.setUserId(user.get().getUserId());
+            if (account.getBalance() == null) {
+                account.setBalance(BigDecimal.valueOf(0));
+            }
+            System.out.println("Account Data"+account);
+            accountRepo.save(account);
+            return ResponseEntity.status(HttpStatus.OK).body("Account Generated Successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Account Already Exist");
         }
+            // Save and return the newly created account
     }
 
     // Retrieves account data by its ID
@@ -64,17 +66,23 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void deposit(Long accountId, BigDecimal amount, String narration) throws InvalidTransactionException {
+    public ResponseEntity<?> deposit(Long accountId,Transaction transaction, String narration) throws InvalidTransactionException {
+        System.out.print("accountId"+accountId);
         Account account = accountRepo.findById(accountId).orElseThrow();
-        Transaction transaction = new Transaction();
-        if(amount.compareTo(BigDecimal.ZERO)>0) {
-            // populate transaction fields
-            transaction.setDepositAmount(amount);
-            transactionService.insertRecord(transaction);
-            account.setBalance(account.getBalance().add(amount));
-            accountRepo.save(account);
+        if(account.getStatus().contains("Active")) {
+//            Transaction transaction = new Transaction();
+            if (transaction.getDepositAmount().compareTo(BigDecimal.ZERO) > 0) {
+                // populate transaction fields
+//                transaction.setDepositAmount(amount);
+                transactionService.insertRecord(account.getUserId(), transaction,accountId);
+//                account.setBalance(account.getBalance().add(amount));
+//                accountRepo.save(account);
+                return ResponseEntity.status(HttpStatus.OK).body("");
+            } else {
+                throw new InvalidTransactionException("Deposit Amount Greater than 0");
+            }
         }else{
-            throw new InvalidTransactionException("Deposit Amount Greater than 0");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Account is Locked");
         }
     }
 
@@ -89,13 +97,20 @@ public class AccountServiceImpl implements AccountService {
         // populate transaction fields
         if(availableBalance.compareTo(amount)>=0 && amount.compareTo(BigDecimal.ZERO)>0) {
             transaction.setDepositAmount(amount.negate()); // negate the amount for withdrawal
-            transactionService.insertRecord(transaction);
+            if(transaction.getNarration().isEmpty() || transaction.getNarration().isBlank()) {
+                transaction.setNarration("Withdrawal");
+            }
+            if(transaction.getTransactionMode().isBlank() || transaction.getTransactionMode().isEmpty()) {
+                transaction.setTransactionMode("Online");
+            }
+            transaction.setSourceAccount(account.getAccountNumber());
+            transactionService.insertRecord(accountId,transaction,accountId);
             account.setBalance(account.getBalance().subtract(amount));
             accountRepo.save(account);
         } else if (amount.compareTo(BigDecimal.ZERO)<=0) {
             throw new InvalidTransactionException("Amount Must be positive");
         }else if(!amount.equals(availableBalance)){
-            throw new InvalidTransactionException("Amount must be less than Available Balance");
+            throw new InvalidTransactionException("Amount must be less than or equal to Available Balance");
         }else{
             throw new InvalidTransactionException("Withdraw Not Allowed");
         }
@@ -125,6 +140,6 @@ public class AccountServiceImpl implements AccountService {
     // Retrieves all account records from the repository
     @Override
     public List<Account> getAllRecords() {
-        return accountRepo.findAll(); // Return the list of all accounts
-    }
+        return accountRepo.findAll();
+    }// Return the list of all accounts
 }

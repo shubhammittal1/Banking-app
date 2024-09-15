@@ -5,6 +5,7 @@ package com.excelr.bank.controllers;
 import com.excelr.bank.models.Account;
 import com.excelr.bank.models.Transaction;
 import com.excelr.bank.security.services.impl.AccountServiceImpl;
+import com.excelr.bank.security.services.impl.TransactionServiceImpl;
 import jakarta.transaction.InvalidTransactionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -25,32 +27,37 @@ public class AccountController {
 	@Autowired
 	private AccountServiceImpl accountService;
 
+	@Autowired
+	private TransactionServiceImpl transactionService;
+
 	// Autowire the AccountRepository to perform CRUD operations on the account data
 
 	// Define a POST endpoint for creating a new account
 	@PostMapping("/create")
 	//Assign Roles to access Endpoints
 	@PreAuthorize("hasRole('ROLE_USER')  or hasRole('ROLE_ADMIN')")
-	public ResponseEntity<?> createAccount(@RequestBody Account accountData){
-
+	public ResponseEntity<?> createAccount(@RequestBody Account accountData,@RequestParam Long userId){
 		// Call service method to create a new account
-		Account createAccount = accountService.createAccount(accountData);
-		// Return HTTP response with the created account data
-		return ResponseEntity.ok(createAccount);
+		 return accountService.createAccount(accountData,userId);
 	}
 
 	@PostMapping("/{accountId}/deposit")
 	//Assign Roles to access this EndPoint
 	@PreAuthorize("hasRole('ROLE_USER')  or hasRole('ROLE_ADMIN')")
-	public ResponseEntity<String> deposit(@PathVariable Long accountId, @RequestBody Transaction request) throws InvalidTransactionException {
-		Account account=new Account();
-		if(!account.getStatus().equals("Lock")) {
-			accountService.deposit(accountId, request.getDepositAmount(), request.getNarration());
-			return ResponseEntity.ok("Deposit successful");
-		}else{
-			return ResponseEntity.badRequest().body("Account is Lock Transaction not Allowed");
-		}
-	}
+	public ResponseEntity<String> deposit(@PathVariable Long accountId, @RequestBody Transaction transaction) throws InvalidTransactionException {
+			try {
+				System.out.println(accountId + " ");
+				BigDecimal tempAmount = transaction.getDepositAmount();
+				String tempStatus = transaction.getNarration();
+				accountService.deposit(accountId, transaction, tempStatus);
+				//transactionService.insertRecord(accountId,request);
+				return ResponseEntity.ok("Deposit successful");
+			}catch (InvalidTransactionException e){
+				e.getMessage();
+			}
+
+		return ResponseEntity.ok("Deposit successful");
+    }
 
 	@PostMapping("/{accountId}/withdrawal")
 	//Assign Roles to access this EndPoint

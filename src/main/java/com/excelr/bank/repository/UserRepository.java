@@ -11,6 +11,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
   // Finds a User entity by its username, returning an Optional to handle cases where the username might not exist
   Optional<User> findByUsername(String username);
 
+
   // Finds a User entity by its email address
   User findByEmail(String email);
 

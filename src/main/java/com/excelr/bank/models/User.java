@@ -25,17 +25,15 @@ public class User {
 
   // Primary key for the user entity
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  @Column(unique = true,name = "user_id")
+  private Long userId;
 
   @NotBlank
   @NotNull
   @Size(max = 20)
+  @Column(unique = true)
   // Username of the user, must not be blank and not null, with a maximum length of 20 characters
   private String username;
-
-  @Column(unique = true)
-  private Long customerId ;
 
   @NotNull
   @NotBlank
@@ -80,6 +78,9 @@ public class User {
   // Many-to-many relationship with roles, fetched lazily
   private Set<Role> roles = new HashSet<>();
 
+//  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+//  private List<Account> accounts;
+
   @Column(name = "createdAt")
   // Date and time when the user was created
   private LocalDateTime createdAt;
@@ -113,7 +114,7 @@ public class User {
   @PrePersist
   public void prePersist() {
     this.createdAt = LocalDateTime.now();
-    this.customerId = System.currentTimeMillis() % 100000000L;
+    this.userId = System.currentTimeMillis() % 100000000L;
   }
 
   // @PreUpdate method to set the date and time before updating the entity

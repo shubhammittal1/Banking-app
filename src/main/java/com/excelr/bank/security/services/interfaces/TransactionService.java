@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface TransactionService {
     // Create a new transaction
-    Transaction insertRecord(Transaction transaction) throws InvalidTransactionException;
+    Transaction insertRecord(Long customerId,Transaction transaction,Long accountId) throws InvalidTransactionException;
     // Retrieve a transaction by ID
     Transaction getTransactionById(Long id);
     // Retrieve all transactions

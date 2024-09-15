@@ -68,7 +68,7 @@ public class UserDetailsImpl implements UserDetails {
 
       // Creates and returns a new UserDetailsImpl instance
       return new UserDetailsImpl(
-              user.getId(),
+              user.getUserId(),
               user.getUsername(),
               user.getEmail(),
               user.getPassword(),

@@ -1,7 +1,11 @@
 package com.excelr.bank.security.services.impl;
 
+import com.excelr.bank.models.Account;
 import com.excelr.bank.models.Transaction;
+import com.excelr.bank.models.User;
+import com.excelr.bank.repository.AccountRepository;
 import com.excelr.bank.repository.TransactionRepository;
+import com.excelr.bank.repository.UserRepository;
 import com.excelr.bank.security.services.interfaces.TransactionService;
 import jakarta.transaction.InvalidTransactionException;
 import org.hibernate.service.spi.ServiceException;
@@ -24,13 +28,28 @@ public class TransactionServiceImpl implements TransactionService {
     @Autowired
     private TransactionRepository transactionRepository;
 
-    @Override
-    public Transaction insertRecord(Transaction transaction) throws InvalidTransactionException {
+    @Autowired
+    private AccountRepository accountRepo;
+    @Autowired
+    private UserRepository userRepository;
 
-            if (transaction.getBalance() == null ) {
+    @Override
+    public Transaction insertRecord(Long customerId, Transaction transaction,Long accountId) throws InvalidTransactionException {
+            Account account= accountRepo.findById(accountId).orElseThrow();
+            User user= userRepository.getReferenceById(customerId);
+            System.out.print("Account"+ account);
+            System.out.print("User"+user);
+            transaction.setCustomerName(account.getAccountHolderName());
+            BigDecimal AmountDeposit=account.getBalance().add(transaction.getDepositAmount());
+            transaction.setUserId(user.getUserId());
+            transaction.setSourceAccount(account.getAccountNumber());
+            transaction.setCustomerName(user.getUsername());
+            account.setBalance(AmountDeposit);
+            accountRepo.save(account);
+            if (transaction.getDepositAmount() == null ) {
                 throw new InvalidTransactionException("null is not allowed");
             }
-
+        System.out.println("Transaction Data"+transaction.toString());
         return transactionRepository.save(transaction);
     }
 
@@ -65,8 +84,8 @@ public class TransactionServiceImpl implements TransactionService {
             try (PrintWriter writer = new PrintWriter(statementFile)) {
                 writer.println("Transaction ID,Transaction Type,Amount,Beneficiary Amount,Beneficiary Account,Description,Transaction Time");
 
-                BigDecimal totalWithdrawalAmount = BigDecimal.ZERO;
-                BigDecimal totalDepositAmount = BigDecimal.ZERO;
+//                BigDecimal totalWithdrawalAmount = BigDecimal.ZERO;
+//                BigDecimal totalDepositAmount = BigDecimal.ZERO;
                 DateTimeFormatter formatter= DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 for (Transaction transaction : transactions) {
                     writer.println(

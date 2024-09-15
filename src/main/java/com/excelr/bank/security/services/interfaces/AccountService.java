@@ -1,16 +1,18 @@
 package com.excelr.bank.security.services.interfaces;
 
 import com.excelr.bank.models.Account;
+import com.excelr.bank.models.Transaction;
 import jakarta.transaction.InvalidTransactionException;
+import org.springframework.http.ResponseEntity;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 public interface AccountService {
     // Create a new account
-     Account createAccount(Account account);
+     ResponseEntity<?> createAccount(Account account, Long userId);
 
-     void deposit(Long accountId, BigDecimal amount, String narration) throws InvalidTransactionException;
+     ResponseEntity<?> deposit(Long accountId, Transaction transaction, String narration) throws InvalidTransactionException;
 
      void withdraw(Long accountId, BigDecimal amount, String narration) throws InvalidTransactionException;
 
