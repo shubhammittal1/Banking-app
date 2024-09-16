@@ -45,7 +45,76 @@
 			"response": []
 		},
 		{
+			"name": "userSignup 2",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTaHViaGFtIiwiaWF0IjoxNzI1NDMzMjIwLCJleHAiOjE3MjU1MTk2MjB9.YekCnBnHckrnag0uAWd-fB8i-nIGRu3qFap6QJLSN5Y",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\":\"Shubham123\",\r\n    \"password\":\"Shubham@123\",\r\n    \"email\":\"shubham.mittal@gmail.com\",\r\n    \"gender\":\"Male\",\r\n    \"dateOfBirth\":\"16-09-1992\",\r\n    \"address\": \"Chennai\",\r\n    \"aadharNo\":\"879908986308\",\r\n    \"pancard\":\"CZDFH7889S\",\r\n    \"phoneNo\":\"7460889660\",\r\n    \"role\":[\"ROLE_ADMIN\",\"ROLE_USER\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/auth/user/signup",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"auth",
+						"user",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "userloginin",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\":\"Shubham123\",\r\n    \"password\":\"Shubham@123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/auth/username/signin",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"auth",
+						"username",
+						"signin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "userloginin 2",
 			"request": {
 				"method": "POST",
 				"header": [],
@@ -118,7 +187,86 @@
 			"response": []
 		},
 		{
+			"name": "createAccount 2",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTaHViaGFtMTIzIiwiaWF0IjoxNzI2Mzk0NDgyLCJleHAiOjE3MjY0MDE2ODJ9.NXIsmAmVx-Jo2K4tdcEsq56Qbk6Kz2TNhn2kzqrDfsA",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\r\n    \"accountType\":\"Current\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/account/create?userId=94477296",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"account",
+						"create"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "94477296"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "userAccountDeposit",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTaHViaGFtMTIzIiwiaWF0IjoxNzI2NDAyMDUwLCJleHAiOjE3MjY0MDkyNTB9.2M9G7haeE2nSGtjLK-C2AZDExRKmzlbH3tXLKRu7SOI",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"receipientAccount\":\"10693280522\",\r\n    \"depositAmount\":50000.00,\r\n    \"transactionMode\":\"Online\",\r\n    \"receipient\":\"Shubham\",\r\n    \"narration\":\"Deposit Amount\"\r\n    \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/account/1198922/deposit",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"account",
+						"1198922",
+						"deposit"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "userAccountDeposit Copy",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -390,6 +538,186 @@
 					"path": [
 						"api",
 						"all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Record By Id",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTaHViaGFtIiwiaWF0IjoxNzI1NjQxNjM4LCJleHAiOjE3MjU2NDg4Mzh9.LgF5bmuf2DSlAOUgJqXL5GborX9IWQv5KEOKxMCQMk8",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/api/getUserById/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"getUserById",
+						"2"
+					],
+					"query": [
+						{
+							"key": "username",
+							"value": "Shubham",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8080/api/account/transfer",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTaGl2YW5zaCIsImlhdCI6MTcyNjQyMjI5MCwiZXhwIjoxNzI2NDI5NDkwfQ.mnYuXUFgLVQ9AzBQxlZj58O17d4IZ4pxodNkdrA8UTU",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\r\n    \"sourceAccount\":\"10553867166\",\r\n    \"recipientAccount\":\"10485239090\",\r\n    \"depositAmount\":1230.00\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/account/transfer",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"account",
+						"transfer"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Withdrawal",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTaGl2YW5zaCIsImlhdCI6MTcyNjQyNTM5NiwiZXhwIjoxNzI2NDMyNTk2fQ.uTu30FWerwj-LjIdFIQjiNig9ntmFwIjqnbQhSKkmc4",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"withdrawalAmount\":477540.00,\r\n    \"narration\":\"Withdraw Amount\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/account/6683131/withdrawal",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"account",
+						"6683131",
+						"withdrawal"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Transfer",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTaGl2YW5zaCIsImlhdCI6MTcyNjQyMjI5MCwiZXhwIjoxNzI2NDI5NDkwfQ.mnYuXUFgLVQ9AzBQxlZj58O17d4IZ4pxodNkdrA8UTU",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\r\n    \"sourceAccount\":\"10553867166\",\r\n    \"recipientAccount\":\"10485239090\",\r\n    \"depositAmount\":1230.00\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/account/transfer",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"account",
+						"transfer"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "userAccountDeposit 2",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTaGl2YW5zaCIsImlhdCI6MTcyNjQyMjI5MCwiZXhwIjoxNzI2NDI5NDkwfQ.mnYuXUFgLVQ9AzBQxlZj58O17d4IZ4pxodNkdrA8UTU",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"recipientAccount\":\"10553867166\",\r\n    \"depositAmount\":50000.00,\r\n    \"transactionMode\":\"Online\",\r\n    \"receipient\":\"Shivansh\",\r\n    \"narration\":\"Deposit Amount\"\r\n    \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/account/6683131/deposit",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"account",
+						"6683131",
+						"deposit"
 					]
 				}
 			},
