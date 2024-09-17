@@ -6,6 +6,8 @@ import com.excelr.bank.models.User;
 import com.excelr.bank.repository.OtpRepository;
 import com.excelr.bank.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -30,6 +32,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
   @Autowired
   public PasswordEncoder passwordEncoder;  // Password encoder for encoding passwords
+
 
   // Method to load user details by username, required by Spring Security
   @Override
@@ -56,13 +59,19 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             .orElse(Collections.emptyList());
   }
 
+  // Method to retrieve a users by their ID
+  public List<User> getByRoleType(String roleType) {
+    return userRepository.findByRoleType(roleType).map(Collections::singletonList)
+            .orElse(Collections.emptyList());
+  }
+
   // Method to retrieve an OTP by its value
   public Otp getOtp(int otp) {
     return otpPasswordRepository.findByOtp(otp);
   }
 
   // Method to update user details
-  public User updateUser(Long id, User userDetails) {
+  public ResponseEntity<?> updateUser(Long id, User userDetails) {
     User user = userRepository.findById(id).orElse(null);
     if (user != null) {
       // Update user fields with provided details
@@ -71,7 +80,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
       user.setPassword(userDetails.getPassword());
       user.setPhoneNo(userDetails.getPhoneNo());
       // Save the updated user to the repository
-      return userRepository.save(user);
+      User userUpdtRecord=userRepository.save(user);
+      return ResponseEntity.status(HttpStatus.OK).body("Successfully Updated!!! Update Details "+userUpdtRecord);
     } else {
       return null;  // Return null if user is not found
     }
@@ -82,53 +92,4 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     userRepository.deleteById(id);
   }
 
-  // Method to generate a random OTP
-  private String generateOtp() {
-    SecureRandom random = new SecureRandom();
-    // Generate a 6-digit OTP
-    return String.format("%06d", random.nextInt(1000000));
-  }
-
-  // Method to send an email with a reset link to the user
-  public String sendEmail(User user) {
-    String resetLink = generateOtp();  // Generate OTP
-    try {
-      SimpleMailMessage message = new SimpleMailMessage();
-      message.setFrom("demobankingapp@gmail.com");  // Sender's email address
-      message.setTo(user.getEmail());  // Recipient's email address
-      message.setSubject("Welcome to ExcelR Banking Services");  // Subject of the email
-      message.setText("To Reset the Password Click on the Link Below " + resetLink);  // Email body
-      return "Success";  // Return success message
-    } catch (Exception e) {
-      e.printStackTrace();  // Print stack trace for debugging
-      return "error";  // Return error message
-    }
-  }
-
-  // Method to update the reset password OTP for a user
-  public void updateResetPasswordOtp(int otp, String email) throws UserNotFoundException {
-    User user = userRepository.findByEmail(email);  // Fetch user by email
-    Otp passwordResetOtp = otpPasswordRepository.findByEmail(email);  // Fetch OTP by email
-    if (user != null) {
-      // Update OTP associated with the user
-      passwordResetOtp.setOtp(otp);
-      userRepository.save(user);  // Save user with updated OTP
-    } else {
-      // Throw exception if user is not found
-      throw new UsernameNotFoundException("Could not find any User with the email " + email);
-    }
-  }
-
-  // Method to retrieve a user by their reset password token
-  public User getByResetPasswordToken(String token) {
-    return userRepository.findByToken(token);
-  }
-
-  // Method to update a user's password
-  public void updatePassword(User user, String newPassword) {
-    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();  // Create a new password encoder
-    String encodedPassword = passwordEncoder.encode(newPassword);  // Encode the new password
-    user.setPassword(encodedPassword);  // Set the encoded password to the user
-    userRepository.save(user);  // Save user with updated password
-  }
 }

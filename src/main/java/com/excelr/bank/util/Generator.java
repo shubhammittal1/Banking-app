@@ -18,9 +18,17 @@ public class Generator {
        return  String.format("%10d", root );
     }
 
-    public Long generateID(){
+    public Long generateAccId(){
         Random random=new Random();
         return random.nextLong(9000000) + 1000000;
+    }
+
+    public Long generateUserId(){
+        return System.currentTimeMillis() % 100000000L;
+    }
+
+    public Long generateAdminId(){
+        return System.currentTimeMillis() % 10000000000L;
     }
 
 }

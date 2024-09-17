@@ -32,9 +32,9 @@ public class Bank {
     private String website;
     private String country;
     private String currency;
-    private String accNumber;
 
     @OneToMany(mappedBy = "bank", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Account> accounts;
+
 
 }

@@ -67,4 +67,8 @@ public class SignupRequest {
   private String dateOfBirth;
 
 
+  @Min(000000)
+  @Max(999999)
+  private int pincode;
+
 }

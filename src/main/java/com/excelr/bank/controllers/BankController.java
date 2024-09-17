@@ -16,7 +16,7 @@ public class BankController {
 
     @GetMapping("/getAll")
     public ResponseEntity<?> getAllRecords(){
-        bankDataService.getAllBanks();
+//        bankDataService.getAllBanks();
         return ResponseEntity.status(HttpStatus.OK).body("Retrieval Successful");
     }
 
@@ -33,8 +33,7 @@ public class BankController {
     @PostMapping("/insert")
     public ResponseEntity<?> insertBank(@RequestBody Bank bank){
         try {
-            bankDataService.insertRecord(bank);
-            return ResponseEntity.status(HttpStatus.OK).body("Data Inserted Successfully");
+            return bankDataService.insertRecord(bank);
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
@@ -42,7 +41,6 @@ public class BankController {
 
     @PutMapping("/update")
     public ResponseEntity<?> updateBank(@RequestBody Bank bank){
-        bankDataService.updateBank(bank);
-        return ResponseEntity.status(HttpStatus.OK).body("");
+        return bankDataService.updateBank(bank);
     }
 }

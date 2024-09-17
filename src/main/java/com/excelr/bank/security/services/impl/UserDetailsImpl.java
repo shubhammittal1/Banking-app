@@ -58,6 +58,13 @@ public class UserDetailsImpl implements UserDetails {
     this.authorities = authorities;
   }
 
+  public UserDetailsImpl(String username, String email, String password, List<GrantedAuthority> authorities) {
+    this.username = username;
+    this.email = email;
+    this.password = password;
+    this.authorities = authorities;
+  }
+
   // Builds a UserDetailsImpl instance from a User object
   public static UserDetailsImpl build(User user) throws IllegalArgumentException{
     if (user!=null) {
@@ -72,6 +79,24 @@ public class UserDetailsImpl implements UserDetails {
               user.getUsername(),
               user.getEmail(),
               user.getPassword(),
+              authorities);
+    }else{
+      throw new RuntimeException("user Details are not null");
+    }
+  }
+
+  public static UserDetailsImpl buildAdmin(User admin) throws IllegalArgumentException{
+    if (admin!=null) {
+      // Converts user roles into a collection of GrantedAuthority
+      List<GrantedAuthority> authorities = admin.getRoles().stream()
+              .map(role -> new SimpleGrantedAuthority(role.getName().name()))
+              .collect(Collectors.toList());
+
+      // Creates and returns a new UserDetailsImpl instance
+      return new UserDetailsImpl(
+              admin.getUsername(),
+              admin.getEmail(),
+              admin.getPassword(),
               authorities);
     }else{
       throw new RuntimeException("user Details are not null");

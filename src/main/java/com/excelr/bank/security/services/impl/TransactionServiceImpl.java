@@ -40,7 +40,7 @@ public class TransactionServiceImpl implements TransactionService {
             User user= userRepository.getReferenceById(customerId);
             System.out.println("User Details"+user);
             if (StringUtils.isNotEmpty(transaction.getRecipientAccount())){
-                Account acc1=accountRepo.findAccountByAccountNumber(transaction.getRecipientAccount());
+                Account acc1=accountRepo.findByAccountNumber(transaction.getRecipientAccount()).orElseThrow(()->new RuntimeException("Account Number Not Found"));
                 transaction.setRecipientName(acc1.getAccountHolderName());
             }
             transaction.setCustomerName(account.getAccountHolderName());
@@ -61,6 +61,9 @@ public class TransactionServiceImpl implements TransactionService {
     public Transaction insertTransferRecord(Long customerId, Transaction transaction,Account account) throws InvalidTransactionException {
         User user= userRepository.getReferenceById(customerId);
         System.out.println("User Details"+user);
+        if(null==transaction.getTransactionType()){
+            throw new InvalidTransactionException("Transaction Mode is not Described");
+        }
         transaction.setCustomerName(account.getAccountHolderName());
         transaction.setUserId(user.getUserId());
         transaction.setSourceAccount(account.getAccountNumber());
@@ -70,6 +73,9 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public Transaction insertWithdrawRecord(Long customerId, Transaction transaction,Account account) throws InvalidTransactionException {
+        if (transaction.getNarration().isEmpty() || transaction.getNarration().isBlank()) {
+            transaction.setNarration("Withdrawal");
+        }
         transaction.setUserId(account.getUserId());
         transaction.setSourceAccount(account.getAccountNumber());
         transaction.setRecipientAccount("NA");

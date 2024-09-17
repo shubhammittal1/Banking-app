@@ -5,8 +5,8 @@ package com.excelr.bank.controllers;
 import com.excelr.bank.exception.UserNotFoundException;
 import com.excelr.bank.models.Account;
 import com.excelr.bank.models.Transaction;
+import com.excelr.bank.payload.request.MobileRechargeRequest;
 import com.excelr.bank.security.services.impl.AccountServiceImpl;
-import com.excelr.bank.security.services.impl.TransactionServiceImpl;
 import jakarta.transaction.InvalidTransactionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -28,8 +27,6 @@ public class AccountController {
 	@Autowired
 	private AccountServiceImpl accountService;
 
-	@Autowired
-	private TransactionServiceImpl transactionService;
 
 	// Autowire the AccountRepository to perform CRUD operations on the account data
 
@@ -42,29 +39,37 @@ public class AccountController {
 		 return accountService.createAccount(accountData,userId);
 	}
 
-	@PostMapping("/{accountId}/deposit")
+	@PostMapping("/{accountNumber}/deposit")
 	//Assign Roles to access this EndPoint
 	@PreAuthorize("hasRole('ROLE_USER')  or hasRole('ROLE_ADMIN')")
-	public ResponseEntity<String> deposit(@PathVariable Long accountId, @RequestBody Transaction transaction) throws InvalidTransactionException {
+	public ResponseEntity<?> deposit(@PathVariable String accountNumber, @RequestBody Transaction transaction) throws InvalidTransactionException {
 			try {
-				System.out.println(accountId + " ");
-				BigDecimal tempAmount = transaction.getDepositAmount();
-				String tempStatus = transaction.getNarration();
-				accountService.deposit(accountId, transaction, tempStatus);
-				return ResponseEntity.ok("Deposit successful");
+				return accountService.deposit(accountNumber, transaction);
 			}catch (InvalidTransactionException e){
-				e.getMessage();
+				throw new InvalidTransactionException("Invalid Data"+e.getMessage());
 			}
-
-		return ResponseEntity.ok("Deposit successful");
     }
 
-	@PostMapping("/{accountId}/withdrawal")
+	@PostMapping("/{accountNumber}/withdraw")
 	//Assign Roles to access this EndPoint
 	@PreAuthorize("hasRole('ROLE_USER')  or hasRole('ROLE_ADMIN')")
-	public ResponseEntity<?> withdraw(@PathVariable Long accountId, @RequestBody Transaction request) throws InvalidTransactionException {
-
-		return accountService.withdraw(accountId, request.getWithdrawalAmount(), request.getNarration());
+	public ResponseEntity<?> withdraw(@PathVariable String accountNumber, @RequestBody Transaction request) throws InvalidTransactionException {
+		try {
+			return accountService.withdraw(accountNumber, request);
+		}catch (InvalidTransactionException e){
+			throw new InvalidTransactionException("Invalid Data"+e.getMessage());
+		}
+	}
+	@PostMapping("/{accountNumber}/recharge")
+	//Assign Roles to access this EndPoint
+	@PreAuthorize("hasRole('ROLE_USER')  or hasRole('ROLE_ADMIN')")
+	public ResponseEntity<?> recharge(@PathVariable String accountNumber, @RequestBody MobileRechargeRequest request) throws InvalidTransactionException {
+		try {
+			Transaction transaction=new Transaction();
+			return accountService.recharge(accountNumber, request,transaction);
+		}catch (InvalidTransactionException e){
+			throw new InvalidTransactionException("Invalid Data"+e.getMessage());
+		}
 	}
 
 	@PostMapping("/transfer")
@@ -75,7 +80,7 @@ public class AccountController {
 			e.getMessage();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Transfer Not Successful");
 		} catch (UserNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(e.getMessage());
         }
     }
 

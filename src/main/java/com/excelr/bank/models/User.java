@@ -1,6 +1,7 @@
 
 package com.excelr.bank.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -53,6 +54,10 @@ public class User {
   // Phone number of the user, must match the pattern for phone numbers and be between 10 and 13 characters long
   private String phoneNo;
 
+  @Min(100000)
+  @Max(999999)
+  private int pincode;
+
   //Ensures address does not contain more than 5 consecutive spaces and includes only alphanumeric characters,
   // spaces, commas, periods, single quotes, and hyphens.
   @Pattern(regexp = "^(?!.*\\s{6,})[A-Za-z0-9\\s.,'-]*$")
@@ -65,6 +70,8 @@ public class User {
 
   @NotNull
   private String gender;
+
+  private String roleType;
 
   @Pattern(regexp = "^[0-9]{4}[ -]?[0-9]{4}[ -]?[0-9]{4}$")
   private String aadharNo;
@@ -81,12 +88,15 @@ public class User {
 //  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 //  private List<Account> accounts;
 
+  @JsonIgnore
   @Column(name = "createdAt")
   // Date and time when the user was created
   private LocalDateTime createdAt;
 
+  @JsonIgnore
   private String token;
 
+  @JsonIgnore
   @Column(name = "tokenCreatedAt")
   // Date and time when the token was created
   private LocalDateTime tokenCreatedAt;
@@ -97,7 +107,8 @@ public class User {
 
   private static final DateTimeFormatter FORMATTER= DateTimeFormatter.ofPattern("yy-MM-dd HH:mm:ss");
 
-  public User(@NotBlank @Size(min = 3, max = 20) String username, String encode, @NotBlank @Size(max = 50) @Email String email,@NotNull String gender, @Pattern(regexp="^(?:0[1-9]|[12]\\d|3[01])([\\/.-])(?:0[1-9]|1[012])\\1(?:19|20)\\d\\d$") String dateOfBirth,@Pattern(regexp="^(?!.*\\s{6,})[A-Za-z0-9\\s.,'-]*$") String address, @Pattern(regexp = "^[0-9]{4}[ -]?[0-9]{4}[ -]?[0-9]{4}$") String aadharNo, @Pattern(regexp="[A-Z]{5}[0-9]{4}[A-Z]{1}") String pancard, @Pattern(regexp="^(\\+\\d{1,2}\\s?)?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4}$") @Size(min=10 ,max = 13) String phoneNo) {
+  public User(@NotBlank @Size(min = 3, max = 20) String username, String encode, @NotBlank @Size(max = 50) @Email String email,@NotNull String gender, @Pattern(regexp="^(?:0[1-9]|[12]\\d|3[01])([\\/.-])(?:0[1-9]|1[012])\\1(?:19|20)\\d\\d$") String dateOfBirth,@Pattern(regexp="^(?!.*\\s{6,})[A-Za-z0-9\\s.,'-]*$") String address, @Pattern(regexp = "^[0-9]{4}[ -]?[0-9]{4}[ -]?[0-9]{4}$") String aadharNo, @Pattern(regexp="[A-Z]{5}[0-9]{4}[A-Z]{1}") String pancard, @Pattern(regexp="^(\\+\\d{1,2}\\s?)?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4}$") @Size(min=10 ,max = 13) String phoneNo,@Min(100000)
+  @Max(999999)int pincode) {
     this.username=username;
     this.password=encode;
     this.email=email;
@@ -107,6 +118,18 @@ public class User {
     this.aadharNo=aadharNo;
     this.pancard=pancard;
     this.phoneNo=phoneNo;
+    this.pincode=pincode;
+  }
+
+  public User(String username, String email, String encode, String dateOfBirth, String gender, String address, String phoneNo, int pincode) {
+    this.username=username;
+    this.password=encode;
+    this.email=email;
+    this.gender=gender;
+    this.dateOfBirth=dateOfBirth;
+    this.address=address;
+    this.phoneNo=phoneNo;
+    this.pincode=pincode;
   }
 
 
@@ -114,7 +137,6 @@ public class User {
   @PrePersist
   public void prePersist() {
     this.createdAt = LocalDateTime.now();
-    this.userId = System.currentTimeMillis() % 100000000L;
   }
 
   // @PreUpdate method to set the date and time before updating the entity
@@ -123,8 +145,4 @@ public class User {
     this.createdAt = LocalDateTime.now();
   }
 
-  // Formats `createdAt` using the defined pattern
-  public String getFormattedCreatedAt() {
-    return this.createdAt != null ? this.createdAt.format(FORMATTER) : "";
-  }
 }

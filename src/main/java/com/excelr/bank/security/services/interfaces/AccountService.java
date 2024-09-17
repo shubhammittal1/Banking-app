@@ -1,7 +1,9 @@
 package com.excelr.bank.security.services.interfaces;
 
+import com.excelr.bank.exception.InsufficientBalanceException;
 import com.excelr.bank.models.Account;
 import com.excelr.bank.models.Transaction;
+import com.excelr.bank.payload.request.MobileRechargeRequest;
 import jakarta.transaction.InvalidTransactionException;
 import org.springframework.http.ResponseEntity;
 
@@ -12,11 +14,12 @@ public interface AccountService {
     // Create a new account
      ResponseEntity<?> createAccount(Account account, Long userId);
 
-     ResponseEntity<?> deposit(Long accountId, Transaction transaction, String narration) throws InvalidTransactionException;
+     ResponseEntity<?> deposit(String accountNumber, Transaction transaction) throws InvalidTransactionException;
 
-     ResponseEntity<?> withdraw(Long accountId, BigDecimal amount, String narration) throws InvalidTransactionException;
+     ResponseEntity<?> withdraw(String accountNumber, Transaction transaction) throws InvalidTransactionException, InsufficientBalanceException;
 
-    //Get Account Details by Accountid
+     ResponseEntity<?> recharge(String accNumber, MobileRechargeRequest request, Transaction transaction)throws InvalidTransactionException;
+        //Get Account Details by Accountid
      Account getAccountDataById(Long id);
 
     //Search Account by id and update Account Details

@@ -69,14 +69,25 @@ public class TestController {
     }
   }
 
+  @GetMapping("/getUserByRoleType/{roleType}")
+  @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+  public ResponseEntity<?> getUserByRoleType(@PathVariable String roleType) {
+    try {
+      // Retrieve the user by ID from the userService
+      return ResponseEntity.ok(userService.getByRoleType(roleType));
+    } catch (Exception e) {
+      // Return a 404 Not Found response if the user is not found
+      return ResponseEntity.notFound().build();
+    }
+  }
+
   // Endpoint to update a user, accessible by users with 'ROLE_ADMIN' or 'ROLE_MODERATOR'
   @PutMapping("/update/{id}")
   @PreAuthorize("hasRole('ROLE_ADMIN') ")
   public ResponseEntity<?> updateUser(@PathVariable Long id, @Valid @RequestBody User userDetails) {
     try {
       // Update the user with the provided details and return the updated user
-      User updatedUser = userService.updateUser(id, userDetails);
-      return ResponseEntity.ok(updatedUser);
+      return userService.updateUser(id, userDetails);
     } catch (Exception e) {
       // Return a 400 Bad Request response if the update fails
       return ResponseEntity.badRequest().body("Update failed: " + e.getMessage());

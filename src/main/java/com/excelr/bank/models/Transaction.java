@@ -43,7 +43,7 @@ public class Transaction {
 
     private String recipientName;
 
-    private String receipientBank;
+    private String recipientBank;
 
     private String recipientAccount;
 
