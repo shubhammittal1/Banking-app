@@ -2,6 +2,7 @@ package com.excelr.bank.controllers;
 
 import com.excelr.bank.models.Bank;
 import com.excelr.bank.security.services.impl.BankDataServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 public class BankController {
 
 
+    @Autowired
     private BankDataServiceImpl bankDataService;
 
     @GetMapping("/getAll")

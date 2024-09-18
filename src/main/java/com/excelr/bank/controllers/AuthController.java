@@ -51,7 +51,7 @@ public class AuthController {
     JwtUtils jwtUtils;
 
     @PostMapping("username/signin")
-    public ResponseEntity<?> authenticateUserByName(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> authenticateUserById(@Valid @RequestBody LoginRequest loginRequest) {
 
         Optional<User> userRepo = userRepository.findById(loginRequest.getUserId());
         User user = userRepo.get();

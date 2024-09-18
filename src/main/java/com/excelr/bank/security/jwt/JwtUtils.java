@@ -20,7 +20,7 @@ public class JwtUtils {
   private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
   // Inject the JWT secret key from application properties
-  @Value("===========================ExcelRBanking===========================")
+  @Value("${bank.app.jwtSecret}")
   private String jwtSecret;
 
   // Inject the JWT expiration time in milliseconds from application properties

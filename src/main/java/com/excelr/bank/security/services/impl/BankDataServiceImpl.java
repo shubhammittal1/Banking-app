@@ -62,7 +62,7 @@ public class BankDataServiceImpl implements BankDataService {
 
 
     private boolean isBankValid(Bank bank) {
-        return StringUtils.isNotBlank(bank.getBankName()) && StringUtils.isNotBlank(bank.getEmail());
+        return StringUtils.isNotBlank(bank.getBankName());
     }
 
 }
