@@ -18,6 +18,8 @@ public class MobileRechargeRequest {
     @Size(min = 10, max = 13)
     private String mobileNumber;
 
+    private String vendorName;
+
     private BigDecimal rechargeAmount;
 
 }

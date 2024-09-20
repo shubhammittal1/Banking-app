@@ -127,7 +127,36 @@ public class AccountServiceImpl implements AccountService {
             BigDecimal availableBalance = account.getBalance();
             if (availableBalance.compareTo(request.getRechargeAmount()) >= 0 && request.getRechargeAmount().compareTo(BigDecimal.ZERO) > 0) {
                 transaction.setTransactionMode("Online");
-                transaction.setNarration("Mobile Recharge to "+request.getMobileNumber()+"Success");
+                transaction.setNarration(request.getVendorName()+" Recharge to "+request.getMobileNumber()+" is Success");
+                transaction.setSourceAccount(account.getAccountNumber());
+                transaction.setDepositAmount(BigDecimal.ZERO);
+                account.setBalance(account.getBalance().subtract(request.getRechargeAmount()));
+                transactionService.insertWithdrawRecord(account.getUserId(), transaction, account);
+                accountRepo.save(account);
+                return ResponseEntity.status(HttpStatus.OK).body("Recharge of Amount "+request.getRechargeAmount()+" Success to:"+request.getMobileNumber()+ " and Amount Deducted from "+accNumber.replaceFirst("(^\\d{7})" ,"XXXXXXX"));
+            } else if (request.getRechargeAmount().compareTo(BigDecimal.ZERO) <= 0) {
+                throw new InvalidTransactionException("Amount Must be positive");
+            } else if (!request.getRechargeAmount().equals(availableBalance)) {
+                throw new InvalidTransactionException("Amount must be less than or equal to Available Balance");
+            } else {
+                throw new InvalidTransactionException("Recharge Not Allowed");
+            }
+        }else{
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Account Lock");
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> electricityBill(String accNumber, MobileRechargeRequest request, Transaction transaction) throws InvalidTransactionException {
+        Account account = accountRepo.findByAccountNumber(accNumber).orElseThrow(()->new RuntimeException("Account not found with userId"));
+        if(account.getStatus().equals("Active")) {
+            if (account.getBalance().compareTo(request.getRechargeAmount()) < 0) {
+                throw new InsufficientBalanceException("Bill Amount: "+request.getRechargeAmount()+" is Greater than Available Account Balance");
+            }
+            BigDecimal availableBalance = account.getBalance();
+            if (availableBalance.compareTo(request.getRechargeAmount()) >= 0 && request.getRechargeAmount().compareTo(BigDecimal.ZERO) > 0) {
+                transaction.setTransactionMode("Online");
+                transaction.setNarration(request.getVendorName()+" Recharge to "+request.getMobileNumber()+" is Success");
                 transaction.setSourceAccount(account.getAccountNumber());
                 transaction.setDepositAmount(BigDecimal.ZERO);
                 account.setBalance(account.getBalance().subtract(request.getRechargeAmount()));

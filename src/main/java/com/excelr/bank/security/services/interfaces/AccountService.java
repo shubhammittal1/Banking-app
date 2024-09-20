@@ -18,7 +18,9 @@ public interface AccountService {
 
      ResponseEntity<?> withdraw(String accountNumber, Transaction transaction) throws InvalidTransactionException, InsufficientBalanceException;
 
-     ResponseEntity<?> recharge(String accNumber, MobileRechargeRequest request, Transaction transaction)throws InvalidTransactionException;
+    ResponseEntity<?> electricityBill(String accNumber, MobileRechargeRequest request, Transaction transaction) throws InvalidTransactionException;
+
+    ResponseEntity<?> recharge(String accNumber, MobileRechargeRequest request, Transaction transaction)throws InvalidTransactionException;
         //Get Account Details by Accountid
      Account getAccountDataById(Long id);
 
