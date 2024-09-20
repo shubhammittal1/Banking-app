@@ -1,4 +1,4 @@
-## Online Banking System with JWT Authentication
+##  Online Banking System with JWT Authentication
 
 ## User Registration, User Login and Authorization process.
 The diagram shows flow of how we implement User Registration, User Login and Authorization process.
@@ -37,7 +37,7 @@ excelrbank.app.jwtExpirationMs= 86400000(1 day in milliseconds)
 ```
 - For MySQL
 ```
-spring.datasource.url=jdbc:mysql://localhost:3306/testdb_spring?useSSL=false
+spring.datasource.url=jdbc:mysql://localhost:3306/online_bankingfinal?useSSL=false
 spring.datasource.username=root
 spring.datasource.password=(Your DB Password)
 
