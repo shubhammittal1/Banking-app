@@ -1,4 +1,4 @@
-##Online Banking System with JWT Authentication
+## Online Banking System with JWT Authentication
 
 ## User Registration, User Login and Authorization process.
 The diagram shows flow of how we implement User Registration, User Login and Authorization process.
