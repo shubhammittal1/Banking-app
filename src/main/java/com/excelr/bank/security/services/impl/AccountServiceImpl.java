@@ -5,6 +5,7 @@ import com.excelr.bank.exception.UserNotFoundException;
 import com.excelr.bank.models.Account;
 import com.excelr.bank.models.Transaction;
 import com.excelr.bank.models.User;
+import com.excelr.bank.payload.request.ElectricityBillRequest;
 import com.excelr.bank.payload.request.MobileRechargeRequest;
 import com.excelr.bank.repository.AccountRepository;
 import com.excelr.bank.repository.UserRepository;
@@ -147,25 +148,25 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public ResponseEntity<?> electricityBill(String accNumber, MobileRechargeRequest request, Transaction transaction) throws InvalidTransactionException {
-        Account account = accountRepo.findByAccountNumber(accNumber).orElseThrow(()->new RuntimeException("Account not found with userId"));
+    public ResponseEntity<?> electricityBill( ElectricityBillRequest request, Transaction transaction) throws InvalidTransactionException {
+        Account account = accountRepo.findByAccountNumber(request.getAccNum()).orElseThrow(()->new RuntimeException("Account not found with userId"));
         if(account.getStatus().equals("Active")) {
-            if (account.getBalance().compareTo(request.getRechargeAmount()) < 0) {
-                throw new InsufficientBalanceException("Bill Amount: "+request.getRechargeAmount()+" is Greater than Available Account Balance");
+            if (account.getBalance().compareTo(request.getAmount()) < 0) {
+                throw new InsufficientBalanceException("Bill Amount: "+request.getAmount()+" is Greater than Available Account Balance");
             }
             BigDecimal availableBalance = account.getBalance();
-            if (availableBalance.compareTo(request.getRechargeAmount()) >= 0 && request.getRechargeAmount().compareTo(BigDecimal.ZERO) > 0) {
+            if (availableBalance.compareTo(request.getAmount()) >= 0 && request.getAmount().compareTo(BigDecimal.ZERO) > 0) {
                 transaction.setTransactionMode("Online");
-                transaction.setNarration(request.getVendorName()+" Recharge to "+request.getMobileNumber()+" is Success");
+                transaction.setNarration(request.getProvidor()+" Bill payment to "+request.getCustomerId()+" is Success");
                 transaction.setSourceAccount(account.getAccountNumber());
                 transaction.setDepositAmount(BigDecimal.ZERO);
-                account.setBalance(account.getBalance().subtract(request.getRechargeAmount()));
+                account.setBalance(account.getBalance().subtract(request.getAmount()));
                 transactionService.insertWithdrawRecord(account.getUserId(), transaction, account);
                 accountRepo.save(account);
-                return ResponseEntity.status(HttpStatus.OK).body("Recharge of Amount "+request.getRechargeAmount()+" Success to:"+request.getMobileNumber()+ " and Amount Deducted from "+accNumber.replaceFirst("(^\\d{7})" ,"XXXXXXX"));
-            } else if (request.getRechargeAmount().compareTo(BigDecimal.ZERO) <= 0) {
+                return ResponseEntity.status(HttpStatus.OK).body("Bill Amount of "+request.getAmount()+" Success to:"+request.getCustomerId()+ " and Amount Deducted from "+request.getAccNum().replaceFirst("(^\\d{7})" ,"XXXXXXX"));
+            } else if (request.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
                 throw new InvalidTransactionException("Amount Must be positive");
-            } else if (!request.getRechargeAmount().equals(availableBalance)) {
+            } else if (!request.getAmount().equals(availableBalance)) {
                 throw new InvalidTransactionException("Amount must be less than or equal to Available Balance");
             } else {
                 throw new InvalidTransactionException("Recharge Not Allowed");
