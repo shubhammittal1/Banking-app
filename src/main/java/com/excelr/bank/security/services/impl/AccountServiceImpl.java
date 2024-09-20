@@ -169,7 +169,7 @@ public class AccountServiceImpl implements AccountService {
             } else if (!request.getAmount().equals(availableBalance)) {
                 throw new InvalidTransactionException("Amount must be less than or equal to Available Balance");
             } else {
-                throw new InvalidTransactionException("Recharge Not Allowed");
+                throw new InvalidTransactionException("Bill Payment Not Allowed");
             }
         }else{
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Account Lock");
