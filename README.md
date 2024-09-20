@@ -4,7 +4,6 @@
 The diagram shows flow of how we implement User Registration, User Login and Authorization process.
 
 ## Spring Boot Server Architecture with Spring Security
-You can have an overview of our Spring Boot Server with the diagram below:
 
 ## Dependency
 
