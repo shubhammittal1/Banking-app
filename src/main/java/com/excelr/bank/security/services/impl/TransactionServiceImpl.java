@@ -91,7 +91,6 @@ public class TransactionServiceImpl implements TransactionService {
         try {
             // Retrieve account transactions from repository
             List<Transaction> transactions = transactionRepository.findTransactionsByUserId(userId);
-//            System.out.println("transaction before"+transactions);
             // Filter transactions by date range
             transactions = transactions.stream()
                     .filter(transaction -> transaction.getTransactionDateAndTime().isAfter
@@ -99,7 +98,6 @@ public class TransactionServiceImpl implements TransactionService {
                             && transaction.getTransactionDateAndTime().isBefore(ChronoLocalDateTime.from(
                                     FormatterUtil.formatData(endDate))))
                     .collect(Collectors.toList());
-//            System.out.println("transaction after"+transactions);
 
             if (transactions.isEmpty()) {
                 throw new ServiceException("No transactions found for the given account ID and date range");

@@ -14,6 +14,7 @@ import com.excelr.bank.security.services.impl.UserDetailsImpl;
 import com.excelr.bank.util.Generator;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -97,6 +98,8 @@ public class AuthController {
         admin.setTokenCreatedAt(LocalDateTime.now());
         admin.setTokenExpAt(LocalDateTime.now().plusHours(2));
         userRepository.save(admin);
+
+
 
         return ResponseEntity.ok(new JwtResponse(jwt,
                 userDetails.getId(),
@@ -199,4 +202,6 @@ public class AuthController {
 
         return ResponseEntity.ok(new MessageResponse("Admin registered successfully!!! with AdminId: "+admin.getUserId()+" UserName: "+admin.getUsername()));
     }
+
+
 }

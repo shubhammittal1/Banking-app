@@ -7,6 +7,7 @@ import com.excelr.bank.payload.request.PasswordResetRequest;
 import com.excelr.bank.repository.OtpRepository;
 import com.excelr.bank.repository.UserRepository;
 import com.excelr.bank.security.services.interfaces.PasswordResetService;
+import jakarta.validation.constraints.Null;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -90,16 +91,17 @@ public class PasswordResetServiceImpl implements PasswordResetService {
 
     // Resets the user's password using the provided OTP and new password
     public void resetPassword(PasswordResetRequest request) {
-        int otp =Integer.parseInt(request.getOtp());
+        String str=request.getOtp();
+        int otp =Integer.parseInt(str);
         String newPassword=request.getConfirmPassword();
         // Find OTP entry in the database
         Otp resetOtp = otpRepository.findByOtp(otp);
+
         userDetailsService.getOtp(otp);
         // Validate OTP and its expiration
         if ( resetOtp != null && !resetOtp.isOtpExpired()) {
             // Find the user associated with the OTP
             User user = userRepository.findByEmail(resetOtp.getEmail());
-
             if (user != null) {
                 // Update the user's password
                 user.setPassword(passwordEncoder.encode(newPassword));

@@ -1,0 +1,7 @@
+Transaction ID,Transaction Type,Amount,Beneficiary Amount,Beneficiary Account,Description,Transaction Time
+1,null,null,50000.00,null,Deposit Amount,2024-09-20
+2,null,null,50000.00,10829236097,Deposit Amount,2024-09-20
+3,null,null,50000.00,null,Deposit Amount,2024-09-20
+4,null,null,50000.00,null,Deposit Amount,2024-09-20
+5,null,null,50000.00,10829236097,Deposit Amount,2024-09-20
+6,null,null,0.00,NA,Withdraw Amount,2024-09-20

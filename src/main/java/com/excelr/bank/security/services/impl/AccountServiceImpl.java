@@ -52,7 +52,7 @@ public class AccountServiceImpl implements AccountService {
             }
             System.out.println("Account Data"+account);
             accountRepo.save(account);
-            return ResponseEntity.status(HttpStatus.OK).body("Account Generated Successfully");
+            return ResponseEntity.status(HttpStatus.OK).body("Account Generated Successfully!!! Your Account Number: "+account.getAccountNumber());
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Account Already Exist");
         }
@@ -75,6 +75,7 @@ public class AccountServiceImpl implements AccountService {
         }
         Account account = accountRepo.findByAccountNumber(accountNumber).orElseThrow(()->new RuntimeException("Account not found"));
         if(account.getStatus().contains("Active")) {
+           request.setRecipientAccount(accountNumber);
             if (request.getDepositAmount().compareTo(BigDecimal.ZERO) > 0) {
                 System.out.println("Transaction object"+request);
                 Transaction transaction=transactionService.insertDepositRecord(account.getUserId(), request,account.getAccountId());

@@ -1,6 +1,8 @@
 package com.excelr.bank.models;
 
 import com.excelr.bank.util.Generator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
@@ -35,14 +37,15 @@ public class Transaction {
     // Amount withdrawn in the transaction, must be greater than 0
     private BigDecimal withdrawalAmount;
 
+    @JsonIgnore
     private String transactionType;
-
+    @JsonIgnore
     private String sourceBank;
 
     private String sourceAccount;
 
     private String recipientName;
-
+    @JsonIgnore
     private String recipientBank;
 
     private String recipientAccount;
@@ -50,7 +53,7 @@ public class Transaction {
     private String customerName;
 
     private String narration;
-
+    @JsonIgnore
     private BigDecimal amount;
 
     @JoinTable(name = "users_data",
@@ -70,10 +73,11 @@ public class Transaction {
     // Date and time when the transaction occurred
     private LocalDateTime transactionDateAndTime;
 
+    @JsonIgnore
     private LocalDateTime date;
-
+    @JsonIgnore
     private LocalDateTime startDate;
-
+    @JsonIgnore
     private LocalDateTime endDate;
 
 

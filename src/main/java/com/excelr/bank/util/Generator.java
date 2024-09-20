@@ -1,10 +1,16 @@
 package com.excelr.bank.util;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+
 import java.security.SecureRandom;
 import java.util.Random;
 import java.util.UUID;
 
 public class Generator {
+
+
     public String generateTransactionId() {
         UUID randomUUID = UUID.randomUUID();
         return randomUUID.toString();
@@ -30,5 +36,8 @@ public class Generator {
     public Long generateAdminId(){
         return System.currentTimeMillis() % 10000000000L;
     }
+
+
+
 
 }

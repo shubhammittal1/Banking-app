@@ -8,16 +8,13 @@ import com.excelr.bank.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.List;
 
@@ -51,7 +48,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
   }
 
   public User getUserById(Long id) {
-    return userRepository.findById(id).orElse(null);
+    return userRepository.findById(id).orElseThrow(()->new RuntimeException("User not Available"));
   }
   // Method to retrieve a users by their ID
   public List<User> getUsersByUsername(String name) {
