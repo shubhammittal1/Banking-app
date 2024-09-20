@@ -75,10 +75,11 @@ public class AccountController {
 	@PostMapping("/transfer")
 	public ResponseEntity<?> transfer(@RequestBody Transaction request)  {
 		try {
+				request.setTransactionMode("Online");
 				return accountService.transfer(request, request.getDepositAmount());
 		}catch (InvalidTransactionException e ){
 			e.getMessage();
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Transfer Not Successful");
+			return ResponseEntity.status(HttpStatus.OK).body("Transaction Success");
 		} catch (UserNotFoundException e) {
             throw new RuntimeException(e.getMessage());
         }

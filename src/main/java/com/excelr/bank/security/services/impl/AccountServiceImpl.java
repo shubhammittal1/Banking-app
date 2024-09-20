@@ -161,6 +161,7 @@ public class AccountServiceImpl implements AccountService {
                 accountRepo.save(destAccount);
                 if(null==request.getNarration()){
                     request.setNarration("Money Transfer");
+
                 }
                 Transaction transaction=transactionService.insertTransferRecord(srcAccount.getUserId(), request,srcAccount);
                 transaction.setUserId(null);
