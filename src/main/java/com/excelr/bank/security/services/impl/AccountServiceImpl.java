@@ -7,6 +7,7 @@ import com.excelr.bank.models.Transaction;
 import com.excelr.bank.models.User;
 import com.excelr.bank.payload.request.ElectricityBillRequest;
 import com.excelr.bank.payload.request.MobileRechargeRequest;
+import com.excelr.bank.payload.request.TVRechargeRequest;
 import com.excelr.bank.repository.AccountRepository;
 import com.excelr.bank.repository.UserRepository;
 import com.excelr.bank.security.services.interfaces.AccountService;
@@ -148,8 +149,8 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public ResponseEntity<?> electricityBill( ElectricityBillRequest request, Transaction transaction) throws InvalidTransactionException {
-        Account account = accountRepo.findByAccountNumber(request.getAccNum()).orElseThrow(()->new RuntimeException("Account not found with userId"));
+    public ResponseEntity<?> electricityBill(String accNumber, ElectricityBillRequest request, Transaction transaction) throws InvalidTransactionException {
+        Account account = accountRepo.findByAccountNumber(accNumber).orElseThrow(()->new RuntimeException("Account not found with userId"));
         if(account.getStatus().equals("Active")) {
             if (account.getBalance().compareTo(request.getAmount()) < 0) {
                 throw new InsufficientBalanceException("Bill Amount: "+request.getAmount()+" is Greater than Available Account Balance");
@@ -176,6 +177,35 @@ public class AccountServiceImpl implements AccountService {
         }
     }
 
+    @Override
+    public ResponseEntity<?> DTHBill(String accNumber,TVRechargeRequest request, Transaction transaction) throws InvalidTransactionException {
+        Account account = accountRepo.findByAccountNumber(accNumber).orElseThrow(()->new RuntimeException("Account not found with userId"));
+        if(account.getStatus().equals("Active")) {
+            if (account.getBalance().compareTo(request.getAmount()) < 0) {
+                throw new InsufficientBalanceException("DTH Amount: "+request.getAmount()+" is Greater than Available Account Balance");
+            }
+            BigDecimal availableBalance = account.getBalance();
+            if (availableBalance.compareTo(request.getAmount()) >= 0 && request.getAmount().compareTo(BigDecimal.ZERO) > 0) {
+                transaction.setTransactionMode("Online");
+                transaction.setNarration(request.getProvider()+" DTH payment to "+request.getCustId()+" is Success");
+                transaction.setSourceAccount(account.getAccountNumber());
+                transaction.setDepositAmount(BigDecimal.ZERO);
+                account.setBalance(account.getBalance().subtract(request.getAmount()));
+                transactionService.insertWithdrawRecord(account.getUserId(), transaction, account);
+                accountRepo.save(account);
+                return ResponseEntity.status(HttpStatus.OK).body("DTH plan is "+request.getAmount()+" Successfully active:"+request.getCustId()+ " and Amount Deducted from "+request.getAccNum().replaceFirst("(^\\d{7})" ,"XXXXXXX"));
+            } else if (request.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+                throw new InvalidTransactionException("Amount Must be positive");
+            } else if (!request.getAmount().equals(availableBalance)) {
+                throw new InvalidTransactionException("Amount must be less than or equal to Available Balance");
+            } else {
+                throw new InvalidTransactionException("DTH Recharge Not Allowed");
+            }
+        }else{
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Account Lock");
+        }
+    }
+
     public ResponseEntity<?> transfer(Transaction request,BigDecimal amount) throws InsufficientBalanceException, InvalidTransactionException ,UserNotFoundException {
         Account srcAccount=accountRepo.findByAccountNumber(request.getSourceAccount()).orElseThrow(()->new RuntimeException("Source Account Not Found"));
         Account destAccount=accountRepo.findByAccountNumber(request.getRecipientAccount()).orElseThrow(()->new RuntimeException("Destination Account Not Found"));
@@ -191,14 +221,12 @@ public class AccountServiceImpl implements AccountService {
                 accountRepo.save(destAccount);
                 if(null==request.getNarration()){
                     request.setNarration("Money Transfer");
-
+                    request.setTransactionType("Debit");
                 }
                 Transaction transaction=transactionService.insertTransferRecord(srcAccount.getUserId(), request,srcAccount);
                 transaction.setUserId(null);
-                transaction.setRecipientAccount("XXXX");
                 transaction.setSourceAccount("XXXX");
-                return ResponseEntity.status(HttpStatus.OK).body("Transfer Successful to " +transaction.getRecipientName()+
-                                                                "in Account Number : "+ transaction.getRecipientAccount().substring(0,6).replace("","X"));
+                return ResponseEntity.status(HttpStatus.OK).body("Transfer Successful to in Account Number : "+ transaction.getRecipientAccount().substring(0,6).replace("","X"));
             }
         }
 

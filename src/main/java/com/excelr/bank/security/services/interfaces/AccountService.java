@@ -5,6 +5,7 @@ import com.excelr.bank.models.Account;
 import com.excelr.bank.models.Transaction;
 import com.excelr.bank.payload.request.ElectricityBillRequest;
 import com.excelr.bank.payload.request.MobileRechargeRequest;
+import com.excelr.bank.payload.request.TVRechargeRequest;
 import jakarta.transaction.InvalidTransactionException;
 import org.springframework.http.ResponseEntity;
 
@@ -19,8 +20,9 @@ public interface AccountService {
 
      ResponseEntity<?> withdraw(String accountNumber, Transaction transaction) throws InvalidTransactionException, InsufficientBalanceException;
 
-    ResponseEntity<?> electricityBill(ElectricityBillRequest request, Transaction transaction) throws InvalidTransactionException;
+    ResponseEntity<?> electricityBill(String accNumber,ElectricityBillRequest request, Transaction transaction) throws InvalidTransactionException;
 
+    ResponseEntity<?> DTHBill(String accNumber,TVRechargeRequest request, Transaction transaction) throws InvalidTransactionException;
     ResponseEntity<?> recharge(String accNumber, MobileRechargeRequest request, Transaction transaction)throws InvalidTransactionException;
         //Get Account Details by Accountid
      Account getAccountDataById(Long id);

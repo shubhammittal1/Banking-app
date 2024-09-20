@@ -5,7 +5,9 @@ package com.excelr.bank.controllers;
 import com.excelr.bank.exception.UserNotFoundException;
 import com.excelr.bank.models.Account;
 import com.excelr.bank.models.Transaction;
+import com.excelr.bank.payload.request.ElectricityBillRequest;
 import com.excelr.bank.payload.request.MobileRechargeRequest;
+import com.excelr.bank.payload.request.TVRechargeRequest;
 import com.excelr.bank.security.services.impl.AccountServiceImpl;
 import jakarta.transaction.InvalidTransactionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,6 +74,30 @@ public class AccountController {
 		}
 	}
 
+	@PostMapping("/{accountNumber}/elecBillPymnt")
+	//Assign Roles to access this EndPoint
+	@PreAuthorize("hasRole('ROLE_USER')  or hasRole('ROLE_ADMIN')")
+	public ResponseEntity<?> recharge(@PathVariable String accountNumber, @RequestBody ElectricityBillRequest request) throws InvalidTransactionException {
+		try {
+			Transaction transaction=new Transaction();
+			return accountService.electricityBill(accountNumber,request,transaction);
+		}catch (InvalidTransactionException e){
+			throw new InvalidTransactionException("Invalid Data"+e.getMessage());
+		}
+	}
+
+	@PostMapping("/{accountNumber}/dthBillPymnt")
+	//Assign Roles to access this EndPoint
+	@PreAuthorize("hasRole('ROLE_USER')  or hasRole('ROLE_ADMIN')")
+	public ResponseEntity<?> DTHRecharge(@PathVariable String accountNumber, @RequestBody TVRechargeRequest request) throws InvalidTransactionException {
+		try {
+			Transaction transaction=new Transaction();
+			return accountService.DTHBill(accountNumber,request,transaction);
+		}catch (InvalidTransactionException e){
+			throw new InvalidTransactionException("Invalid Data"+e.getMessage());
+		}
+	}
+
 	@PostMapping("/transfer")
 	public ResponseEntity<?> transfer(@RequestBody Transaction request)  {
 		try {
@@ -79,7 +105,7 @@ public class AccountController {
 				return accountService.transfer(request, request.getDepositAmount());
 		}catch (InvalidTransactionException e ){
 			e.getMessage();
-			return ResponseEntity.status(HttpStatus.OK).body("Transaction Success");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Transaction not Success");
 		} catch (UserNotFoundException e) {
             throw new RuntimeException(e.getMessage());
         }

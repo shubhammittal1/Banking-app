@@ -14,4 +14,6 @@ public class TVRechargeRequest {
     private String provider;
     private BigDecimal rechgPlan;
     private BigDecimal amount;
+    private Long custId;
+    private String accNum;
 }

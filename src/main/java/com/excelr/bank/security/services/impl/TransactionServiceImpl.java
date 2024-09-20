@@ -61,6 +61,7 @@ public class TransactionServiceImpl implements TransactionService {
     public Transaction insertTransferRecord(Long customerId, Transaction transaction,Account account) throws InvalidTransactionException {
         User user= userRepository.getReferenceById(customerId);
         System.out.println("User Details"+user);
+
         if(null==transaction.getTransactionType()){
             throw new InvalidTransactionException("Transaction Mode is not Described");
         }
