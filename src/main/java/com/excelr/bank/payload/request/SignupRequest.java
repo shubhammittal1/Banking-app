@@ -23,7 +23,7 @@ public class SignupRequest {
   private Long customerId ;
   @NotBlank
   @Size(min = 3, max = 20)
-  private String username;
+  private String name;
 
   // Ensures that the field is not null and not blank
   @NotBlank

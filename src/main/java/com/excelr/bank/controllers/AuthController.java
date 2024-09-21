@@ -111,7 +111,7 @@ public class AuthController {
     @PostMapping("/user/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
 
-        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+        if (userRepository.existsByUsername(signUpRequest.getName())) {
             return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("Error: Username is already taken!"));
@@ -125,7 +125,7 @@ public class AuthController {
 
         // Create new user's account
         User user = new User(
-                signUpRequest.getUsername(),
+                signUpRequest.getName(),
                 encoder.encode(signUpRequest.getPassword()),
                 signUpRequest.getEmail(),
                 signUpRequest.getGender(),
@@ -168,7 +168,7 @@ public class AuthController {
     @PostMapping("/admin/signup")
     public ResponseEntity<?> registerAdmin(@Valid @RequestBody SignupRequest signUpRequest) {
 
-        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+        if (userRepository.existsByUsername(signUpRequest.getName())) {
             return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("Error: AdminName is already taken!"));
@@ -182,7 +182,7 @@ public class AuthController {
 
         // Create new user's account
         User admin = new User(
-                signUpRequest.getUsername(),
+                signUpRequest.getName(),
                 signUpRequest.getEmail(),
                 encoder.encode(signUpRequest.getPassword()),
                 signUpRequest.getDateOfBirth(),
