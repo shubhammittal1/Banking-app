@@ -226,7 +226,7 @@ public class AccountServiceImpl implements AccountService {
                 Transaction transaction=transactionService.insertTransferRecord(srcAccount.getUserId(), request,srcAccount);
                 transaction.setUserId(null);
                 transaction.setSourceAccount("XXXX");
-                return ResponseEntity.status(HttpStatus.OK).body("Transfer Successful to in Account Number : "+ transaction.getRecipientAccount().substring(0,6).replace("","X"));
+                return ResponseEntity.status(HttpStatus.OK).body("Transfer Successful to Account Number : "+ transaction.getRecipientAccount().replaceFirst("(^\\d{7})" ,"XXXXXXX"));
             }
         }
 

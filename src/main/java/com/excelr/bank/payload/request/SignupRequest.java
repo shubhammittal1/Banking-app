@@ -47,7 +47,7 @@ public class SignupRequest {
   // Validates phone numbers with optional country code, optional parentheses, and allows spaces, dots, or hyphens as separators
   @Pattern(regexp="^(\\+\\d{1,2}\\s?)?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4}$")
   @Size(min=10 ,max = 13)
-  private String phoneNo;
+  private String contactNo;
   // Ensures address does not contain more than 5 consecutive spaces and includes only alphanumeric characters,
   // spaces, commas, periods, single quotes, and hyphens
   @Pattern(regexp="^(?!.*\\s{6,})[A-Za-z0-9\\s.,'-]*$")
@@ -61,11 +61,7 @@ public class SignupRequest {
   @Pattern(regexp="[A-Z]{5}[0-9]{4}[A-Z]{1}")
   private String pancard;
 
-  // Validates dates in the format dd/MM/yyyy, dd-MM-yyyy, or dd.MM.yyyy,
-  // ensuring correct day and month values with allowed separators
-  @Pattern(regexp="^(?:0[1-9]|[12]\\d|3[01])([\\/.-])(?:0[1-9]|1[012])\\1(?:19|20)\\d\\d$")
   private String dateOfBirth;
-
 
   @Min(000000)
   @Max(999999)

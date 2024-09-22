@@ -75,7 +75,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
       user.setUsername(userDetails.getUsername());
       user.setEmail(userDetails.getEmail());
       user.setPassword(userDetails.getPassword());
-      user.setPhoneNo(userDetails.getPhoneNo());
+      user.setContactNo(userDetails.getContactNo());
       // Save the updated user to the repository
       User userUpdtRecord=userRepository.save(user);
       return ResponseEntity.status(HttpStatus.OK).body("Successfully Updated!!! Update Details "+userUpdtRecord);

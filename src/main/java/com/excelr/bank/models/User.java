@@ -52,7 +52,7 @@ public class User {
   @Pattern(regexp = "^(\\+\\d{1,2}\\s?)?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4}$")
   @Size(min = 10, max = 13)
   // Phone number of the user, must match the pattern for phone numbers and be between 10 and 13 characters long
-  private String phoneNo;
+  private String contactNo;
 
   @Min(100000)
   @Max(999999)
@@ -64,8 +64,6 @@ public class User {
   // Address of the user, must not contain more than 5 consecutive spaces
   private String address;
 
-  @Pattern(regexp = "^(?:0[1-9]|[12]\\d|3[01])([\\/.-])(?:0[1-9]|1[012])\\1(?:19|20)\\d\\d$")
-  // Date of birth of the user, must match the pattern for dates in dd/MM/yyyy, dd-MM-yyyy, or dd.MM.yyyy format
   private String dateOfBirth;
 
   @NotNull
@@ -107,7 +105,7 @@ public class User {
 
   private static final DateTimeFormatter FORMATTER= DateTimeFormatter.ofPattern("yy-MM-dd HH:mm:ss");
 
-  public User(@NotBlank @Size(min = 3, max = 20) String username, String encode, @NotBlank @Size(max = 50) @Email String email,@NotNull String gender, @Pattern(regexp="^(?:0[1-9]|[12]\\d|3[01])([\\/.-])(?:0[1-9]|1[012])\\1(?:19|20)\\d\\d$") String dateOfBirth,@Pattern(regexp="^(?!.*\\s{6,})[A-Za-z0-9\\s.,'-]*$") String address, @Pattern(regexp = "^[0-9]{4}[ -]?[0-9]{4}[ -]?[0-9]{4}$") String aadharNo, @Pattern(regexp="[A-Z]{5}[0-9]{4}[A-Z]{1}") String pancard, @Pattern(regexp="^(\\+\\d{1,2}\\s?)?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4}$") @Size(min=10 ,max = 13) String phoneNo,@Min(100000)
+  public User(@NotBlank @Size(min = 3, max = 20) String username, String encode, @NotBlank @Size(max = 50) @Email String email,@NotNull String gender,String dateOfBirth,@Pattern(regexp="^(?!.*\\s{6,})[A-Za-z0-9\\s.,'-]*$") String address, @Pattern(regexp = "^[0-9]{4}[ -]?[0-9]{4}[ -]?[0-9]{4}$") String aadharNo, @Pattern(regexp="[A-Z]{5}[0-9]{4}[A-Z]{1}") String pancard, @Pattern(regexp="^(\\+\\d{1,2}\\s?)?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4}$") @Size(min=10 ,max = 13) String contactNo,@Min(100000)
   @Max(999999)int pincode) {
     this.username=username;
     this.password=encode;
@@ -117,18 +115,18 @@ public class User {
     this.address=address;
     this.aadharNo=aadharNo;
     this.pancard=pancard;
-    this.phoneNo=phoneNo;
+    this.contactNo=contactNo;
     this.pincode=pincode;
   }
 
-  public User(String username, String email, String encode, String dateOfBirth, String gender, String address, String phoneNo, int pincode) {
+  public User(String username, String email, String encode, String dateOfBirth, String gender, String address, String contactNo, int pincode) {
     this.username=username;
     this.password=encode;
     this.email=email;
     this.gender=gender;
     this.dateOfBirth=dateOfBirth;
     this.address=address;
-    this.phoneNo=phoneNo;
+    this.contactNo=contactNo;
     this.pincode=pincode;
   }
 

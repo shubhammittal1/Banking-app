@@ -133,7 +133,7 @@ public class AuthController {
                 signUpRequest.getAddress(),
                 signUpRequest.getAadharNo(),
                 signUpRequest.getPancard(),
-                signUpRequest.getPhoneNo(),
+                signUpRequest.getContactNo(),
                 signUpRequest.getPincode());
 
         Set<String> strRoles = signUpRequest.getRole();
@@ -188,7 +188,7 @@ public class AuthController {
                 signUpRequest.getDateOfBirth(),
                 signUpRequest.getGender(),
                 signUpRequest.getAddress(),
-                signUpRequest.getPhoneNo(),
+                signUpRequest.getContactNo(),
                 signUpRequest.getPincode());
 
         Set<Role> roles = new HashSet<>();
