@@ -41,6 +41,7 @@ public class BankDataServiceImpl implements BankDataService {
             throw new BankCreationException(bank.getBankName()+ " is already registered with IFSC "+bank.getIfscCode());
         }else{
             if (isBankValid(bank)) {
+                System.out.println(bank);
                 bankDataRepository.save(bank);
                 return ResponseEntity.status(HttpStatus.OK).body("Congratulations!!! You are Successfully Registered with ExcelR Banking");
             } else {

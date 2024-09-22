@@ -99,7 +99,7 @@ public class AccountServiceImpl implements AccountService {
             }
             BigDecimal availableBalance = account.getBalance();
             if (availableBalance.compareTo(request.getWithdrawalAmount()) >= 0 && request.getWithdrawalAmount().compareTo(BigDecimal.ZERO) > 0) {
-                request.setTransactionMode("Online");
+                request.setTransactionMode("offline");
                 request.setSourceAccount(accountNumber);
                 request.setDepositAmount(BigDecimal.ZERO);
                 transactionService.insertWithdrawRecord(account.getUserId(), request, account);
@@ -129,13 +129,13 @@ public class AccountServiceImpl implements AccountService {
             BigDecimal availableBalance = account.getBalance();
             if (availableBalance.compareTo(request.getRechargeAmount()) >= 0 && request.getRechargeAmount().compareTo(BigDecimal.ZERO) > 0) {
                 transaction.setTransactionMode("Online");
-                transaction.setNarration(request.getVendorName()+" Recharge to "+request.getMobileNumber()+" is Success");
+                transaction.setNarration(request.getProvider()+" Recharge to "+request.getMobileNumber()+" is Success");
                 transaction.setSourceAccount(account.getAccountNumber());
                 transaction.setDepositAmount(BigDecimal.ZERO);
                 account.setBalance(account.getBalance().subtract(request.getRechargeAmount()));
                 transactionService.insertWithdrawRecord(account.getUserId(), transaction, account);
                 accountRepo.save(account);
-                return ResponseEntity.status(HttpStatus.OK).body("Recharge of Amount "+request.getRechargeAmount()+" Success to:"+request.getMobileNumber()+ " and Amount Deducted from "+accNumber.replaceFirst("(^\\d{7})" ,"XXXXXXX"));
+                return ResponseEntity.status(HttpStatus.OK).body(request.getProvider()+" Recharge of Amount "+request.getRechargeAmount()+" Success to:"+request.getMobileNumber()+ " and Amount Deducted from "+accNumber.replaceFirst("(^\\d{7})" ,"XXXXXXX"));
             } else if (request.getRechargeAmount().compareTo(BigDecimal.ZERO) <= 0) {
                 throw new InvalidTransactionException("Amount Must be positive");
             } else if (!request.getRechargeAmount().equals(availableBalance)) {

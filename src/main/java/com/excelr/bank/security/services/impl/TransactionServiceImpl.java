@@ -80,7 +80,6 @@ public class TransactionServiceImpl implements TransactionService {
         transaction.setSourceAccount(account.getAccountNumber());
         transaction.setRecipientAccount("NA");
         transaction.setCustomerName(account.getAccountHolderName());
-        transaction.setTransactionMode("offline");
         if (transaction.getDepositAmount() == null ) {
             throw new InvalidTransactionException("null is not allowed");
         }

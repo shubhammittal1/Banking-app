@@ -27,7 +27,8 @@ public class Bank {
     @NotBlank
     private String bankName;
     private String ifscCode;
-    private String Address;
+    private String address;
+
     @Pattern(regexp = "^(\\+\\d{1,2}\\s?)?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4}$")
     @Size(min = 10, max = 13)
     private String phoneNo;

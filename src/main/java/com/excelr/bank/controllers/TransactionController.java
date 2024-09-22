@@ -1,7 +1,7 @@
 package com.excelr.bank.controllers;
 
 import com.excelr.bank.models.Transaction;
-import com.excelr.bank.payload.request.Statement;
+import com.excelr.bank.payload.request.StatementRequest;
 import com.excelr.bank.security.services.impl.TransactionServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -54,9 +54,9 @@ public class TransactionController {
     }
 
     @PostMapping("/generate/statement")
-    public ResponseEntity<?> generateStatement(@RequestBody Statement statement) throws NullPointerException{
-        if(null!=statement.getUserId() && null!=statement.getStartDate() && null!= statement.getEndDate()){
-            List<Transaction> transactionList=transactionService.getStatement(statement.getUserId(),statement.getStartDate(),statement.getEndDate());
+    public ResponseEntity<?> generateStatement(@RequestBody StatementRequest statementRequest) throws NullPointerException{
+        if(null!= statementRequest.getUserId() && null!= statementRequest.getStartDate() && null!= statementRequest.getEndDate()){
+            List<Transaction> transactionList=transactionService.getStatement(statementRequest.getUserId(), statementRequest.getStartDate(), statementRequest.getEndDate());
             return ResponseEntity.status(HttpStatus.OK).body(transactionList);
         }else{
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Data");
@@ -64,7 +64,7 @@ public class TransactionController {
     }
 
     @PostMapping("/download/statement")
-    public ResponseEntity<?> downloadStatement(@RequestBody Statement transaction) throws  NullPointerException{
+    public ResponseEntity<?> downloadStatement(@RequestBody StatementRequest transaction) throws  NullPointerException{
         if(transaction.getUserId()!=null && transaction.getStartDate()!=null && transaction.getEndDate()!=null){
             transactionService.downloadStatement(transaction.getUserId(),transaction.getStartDate(),transaction.getEndDate());
             return ResponseEntity.status(HttpStatus.OK).body("Statement Downloaded Succesfully");

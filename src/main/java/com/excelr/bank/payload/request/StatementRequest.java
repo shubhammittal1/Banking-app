@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class Statement {
+public class StatementRequest {
     private Long accountId;
     private Long userId;
     private String startDate;
